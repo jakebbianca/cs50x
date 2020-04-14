@@ -18,19 +18,19 @@ int main(void)
     for (i = 0; i < h; i++)
     {
         //Loop to print leading spaces, with one less leading space each row as i counts up
-        for(j = 0; j < h - i - 1; j++)
+        for (j = 0; j < h - i - 1; j++)
         {
             printf(" ");
         }
         //Loop to print 1st pyramid hashes; do I need diff var?
-        for(j = 0; j < i + 1; j++)
+        for (j = 0; j < i + 1; j++)
         {
             printf("#");
         }
         //Print two gap spaces per each outer loop, so per row
         printf("  ");
         //Loop to print second pyramid hashes
-        for(j = 0; j < i + 1; j++)
+        for (j = 0; j < i + 1; j++)
         {
             printf("#");
         }
