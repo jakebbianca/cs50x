@@ -9,7 +9,8 @@ int count_letters(string s0);
 int count_words(string s0);
 int count_sentences(string s0);
 //main function
-int main(void) {
+int main(void)
+{
     //Create character array s, get user input to determine value
     string s = get_string("Text: ");
     int letter_count = count_letters(s);
@@ -40,7 +41,8 @@ int main(void) {
 
 //nested functions
 
-int count_letters(string s0) {
+int count_letters(string s0)
+{
     int count0 = 0;
     for (int i = 0; s0[i] != '\0'; i++)
     {
@@ -52,7 +54,8 @@ int count_letters(string s0) {
     return count0;
 }
 
-int count_words(string s1) {
+int count_words(string s1)
+{
     int count1 = 1;
     for (int i = 0; s1[i] != '\0'; i++)
     {
@@ -64,11 +67,12 @@ int count_words(string s1) {
     return count1;
 }
 //36,43.63 == !,.,?
-int count_sentences(string s2) {
+int count_sentences(string s2)
+{
     int count2 = 0;
     for (int i = 0; s2[i] != '\0'; i++)
     {
-        if ((s2[i] == '.' || s2[i] == '?' || s2[i] == '!') && ispunct(s2[i+1]) == 0)
+        if ((s2[i] == '.' || s2[i] == '?' || s2[i] == '!') && ispunct(s2[i + 1]) == 0)
         {
             count2++;
         }
