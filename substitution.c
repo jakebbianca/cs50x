@@ -54,7 +54,7 @@ int main(int argc, string argv[])
     }
     string pt = get_string("plaintext: ");
     int ptlen = strlen(pt);
-    printf("ciphertext ");
+    printf("ciphertext: ");
     for (int i = 0; i < ptlen; i++)
     {
         if (islower(pt[i]) != 0)
