@@ -175,7 +175,7 @@ void sort_pairs(void)
     }
     for (int i = 0; i < pair_count - 1; i++)
     {
-       for (int j = 0; j < pair_count - i - 1; j++)
+       for (int j = i; j < pair_count - 1; j++)
        {
            if (strength[j] > strength[j + 1])
            {
