@@ -169,7 +169,7 @@ void swap(int x, int y)
 void sort_pairs(void)
 {
     int strength[pair_count];
-    for (int i = 0; i < pair_count; i++)
+    for (int i = 0; i < pair_count - 1; i++)
     {
         strength[i] = preferences[pairs[i].winner][pairs[i].winner] - preferences[pairs[i].loser][pairs[i].winner];
     }
