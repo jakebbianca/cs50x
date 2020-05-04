@@ -175,13 +175,13 @@ void sort_pairs(void)
     }
     for (int i = 0; i < pair_count - 1; i++)
     {
-       for (int j = i + 1; j < pair_count; j++)
+       for (int j = 0; j < pair_count - i - 1; j++)
        {
-           if (strength[j] > strength[i])
+           if (strength[j] > strength[j + 1])
            {
-           swap(pairs[i].winner, pairs[j].winner);
-           swap(pairs[i].loser, pairs[j].loser);
-           swap(strength[i], strength[j]);
+           swap(pairs[j].winner, pairs[j + 1].winner);
+           swap(pairs[j].loser, pairs[j + 1].loser);
+           swap(strength[j], strength[j + 1]);
            }
        }
     }
