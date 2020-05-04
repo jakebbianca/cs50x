@@ -23,7 +23,6 @@ pair;
 // Array of candidates
 string candidates[MAX];
 pair pairs[MAX * (MAX - 1) / 2];
-pair sortedpairs[MAX * (MAX - 1) / 2];
 
 int pair_count;
 int candidate_count;
@@ -32,6 +31,7 @@ int candidate_count;
 bool vote(int rank, string name, int ranks[]);
 void record_preferences(int ranks[]);
 void add_pairs(void);
+void swap(int x, int y);
 void sort_pairs(void);
 void lock_pairs(void);
 void print_winner(void);
@@ -157,23 +157,33 @@ void add_pairs(void)
     return;
 }
 
+void swap(int x, int y)
+{
+    int temp = x;
+    x = y;
+    y = temp;
+}
+
 // Sort pairs in decreasing order by strength of victory
 //Program starts to fail HERE
 void sort_pairs(void)
 {
+    int strength[pair_count];
     for (int i = 0; i < pair_count; i++)
     {
-        for (int j = i + 1; j < pair_count; i++)
-        {
-            sortedpairs[i].winner = pairs[i].winner;
-            sortedpairs[i].loser = pairs[i].loser;
-            if (preferences[pairs[i].winner][pairs[i].loser] < preferences[pairs[j].winner][pairs[j].loser])
-            {
-                sortedpairs[i].winner = pairs[j].winner;
-                sortedpairs[i].loser = pairs[j].loser;
-            }
-
-        }
+        strength[i] = preferences[pairs[i].winner][pairs[i].winner] - preferences[pairs[i].loser][pairs[i].winner];
+    }
+    for (int i = 0; i < pair_count - 1; i++)
+    {
+       for (int j = i + 1; j < pair_count; j++)
+       {
+           if (strength[j] > strength[i])
+           {
+           swap(pairs[i].winner, pairs[j].winner);
+           swap(pairs[i].loser, pairs[j].loser);
+           swap(strength[i], strength[j]);
+           }
+       }
     }
 }
 // Lock pairs into the candidate graph in order, without creating cycles
