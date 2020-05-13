@@ -70,10 +70,7 @@ void reflect(int height, int width, RGBTRIPLE image[height][width])
     {
         for (int j = 0; j < width; j++)
         {
-            if (j < mirror || j > mirror)
-            {
-                tmparr[i][j] = image[i][width - j - 1];
-            }
+            tmparr[i][j] = image[i][width - j - 1];
         }
     }
     for (int i = 0; i < height; i++)
