@@ -185,7 +185,7 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
             }
             else
             {
-            tmparr[i][j].rgbtGreen = round((float)grnavg / n);
+                tmparr[i][j].rgbtGreen = round((float)grnavg / n);
             }
 
             if (round((float)redavg / n) > 255)
@@ -194,7 +194,7 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
             }
             else
             {
-            tmparr[i][j].rgbtRed = round((float)redavg / n);
+                tmparr[i][j].rgbtRed = round((float)redavg / n);
             }
 
             bluavg = 0;
