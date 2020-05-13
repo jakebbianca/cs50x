@@ -65,12 +65,12 @@ void sepia(int height, int width, RGBTRIPLE image[height][width])
 void reflect(int height, int width, RGBTRIPLE image[height][width])
 {
     RGBTRIPLE tmparr[height][width];
-    float mirror = ((float)width - 1)/ 2;
+    float mirror = ((float)width - 1) / 2;
     for (int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
         {
-            if ((float)j != mirror)
+            if ((float)j < mirror || (float)j > mirror)
             {
                 tmparr[i][j] = image[i][width - j - 1];
             }
