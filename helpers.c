@@ -222,9 +222,9 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
             }
             if (ip < height && jp < width)
             {
-                gxr += (image[im][jm].rgbtRed);
-                gxg += (image[im][jm].rgbtGreen);
-                gxb += (image[im][jm].rgbtBlue);
+                gxr += (image[ip][jp].rgbtRed);
+                gxg += (image[ip][jp].rgbtGreen);
+                gxb += (image[ip][jp].rgbtBlue);
             }
             //Gy values
             if (im >= 0 && jm >= 0)
