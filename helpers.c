@@ -178,17 +178,17 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
     {
         for (int j = 0; j < width; j++)
         {
-            int gxr = 0;
-            int gxg = 0;
-            int gxb = 0;
-            int gyr = 0;
-            int gyg = 0;
-            int gyb = 0;
+            float gxr = 0;
+            float gxg = 0;
+            float gxb = 0;
+            float gyr = 0;
+            float gyg = 0;
+            float gyb = 0;
             int im = i - 1;
             int ip = i + 1;
             int jm = j - 1;
             int jp = j + 1;
-            int sobred = 0;
+            float sobred = 0;
             int sobgrn = 0;
             int sobblu = 0;
             //Gx sums
