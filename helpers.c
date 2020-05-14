@@ -174,21 +174,23 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
 void edges(int height, int width, RGBTRIPLE image[height][width])
 {
     RGBTRIPLE tmparr[height][width];
-    int im, ip, jm, jp, sobred, sobgrn, sobblu;
-    int gxr = 0;
-    int gxg = 0;
-    int gxb = 0;
-    int gyr = 0;
-    int gyg = 0;
-    int gyb = 0;
     for (int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
         {
-            im = i - 1;
-            ip = i + 1;
-            jm = j - 1;
-            jp = j + 1;
+            int gxr = 0;
+            int gxg = 0;
+            int gxb = 0;
+            int gyr = 0;
+            int gyg = 0;
+            int gyb = 0;
+            int im = i - 1;
+            int ip = i + 1;
+            int jm = j - 1;
+            int jp = j + 1;
+            int sobred = 0;
+            int sobgrn = 0;
+            int sobblu = 0;
             //Gx sums
             if (im >= 0 && jm >= 0)
             {
@@ -226,7 +228,7 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
                 gxg += (image[ip][jp].rgbtGreen);
                 gxb += (image[ip][jp].rgbtBlue);
             }
-            //Gy values
+            //Gy sums
             if (im >= 0 && jm >= 0)
             {
                 gyr += ((image[im][jm].rgbtRed) * -1);
@@ -263,31 +265,8 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
                 gyg += (image[ip][jp].rgbtGreen);
                 gyb += (image[ip][jp].rgbtBlue);
             }
+            //If > 255, = 255, else = Sobel
 
-            if (sqrt((gxr * gxr) + (gyr * gyr)) > 255)
-            {
-                sobred = 255;
-            }
-            else
-            {
-                sobred = sqrt((gxr * gxr) + (gyr * gyr));
-            }
-            if (sqrt((gxg * gxg) + (gyg * gyg)) > 255)
-            {
-                sobgrn = 255;
-            }
-            else
-            {
-                sobgrn = sqrt((gxg * gxg) + (gyg * gyg));
-            }
-            if (sqrt((gxb * gxb) + (gyb * gyb)) > 255)
-            {
-                sobblu = 255;
-            }
-            else
-            {
-                sobblu = sqrt((gxb * gxb) + (gyb * gyb));
-            }
             if (sqrt((gxr * gxr) + (gyr * gyr)) > 255)
             {
                 sobred = 255;
@@ -327,7 +306,7 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
     }
     for (int i = 0; i < height; i++)
     {
-        for (int j = 0; j < height; j++)
+        for (int j = 0; j < width; j++)
         {
             image[i][j].rgbtRed = tmparr[i][j].rgbtRed;
             image[i][j].rgbtGreen = tmparr[i][j].rgbtGreen;
