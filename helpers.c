@@ -188,7 +188,7 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
             int ip = i + 1;
             int jm = j - 1;
             int jp = j + 1;
-            float sobred = 0;
+            int sobred = 0;
             int sobgrn = 0;
             int sobblu = 0;
             //Gx sums
@@ -267,29 +267,29 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
             }
             //If > 255, = 255, else = Sobel
 
-            if (sqrt((gxr * gxr) + (gyr * gyr)) > 255)
+            if (round(sqrt((gxr * gxr) + (gyr * gyr))) > 255)
             {
                 sobred = 255;
             }
             else
             {
-                sobred = sqrt((gxr * gxr) + (gyr * gyr));
+                sobred = round(sqrt((gxr * gxr) + (gyr * gyr)));
             }
-            if (sqrt((gxg * gxg) + (gyg * gyg)) > 255)
+            if (round(sqrt((gxg * gxg) + (gyg * gyg))) > 255)
             {
                 sobgrn = 255;
             }
             else
             {
-                sobgrn = sqrt((gxg * gxg) + (gyg * gyg));
+                sobgrn = round(sqrt((gxg * gxg) + (gyg * gyg)));
             }
-            if (sqrt((gxb * gxb) + (gyb * gyb)) > 255)
+            if (round(sqrt((gxb * gxb) + (gyb * gyb))) > 255)
             {
                 sobblu = 255;
             }
             else
             {
-                sobblu = sqrt((gxb * gxb) + (gyb * gyb));
+                sobblu = round(sqrt((gxb * gxb) + (gyb * gyb)));
             }
 
             tmparr[i][j].rgbtRed = sobred;
