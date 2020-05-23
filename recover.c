@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
     int jpgct = 0;
     //Allocate memory for a string that is enough to include characters "###.jpg" AND the NULL terminating character
     char *jpgname = malloc(sizeof(char)*8);
+    int bytesread;
     FILE *img = NULL;
     while (fread(pblock_array, 1, 512, memcard) == 512)
     {
@@ -72,8 +73,6 @@ int main(int argc, char *argv[])
         printf("No JPEGs detected.\n");
         return 4;
     }
-    //Write data at end of memory card
-    fwrite(pblock_array, 1, 512, img);
     //Close last JPEG file and memory card
     fclose(img);
     fclose(memcard);
