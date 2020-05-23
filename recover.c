@@ -4,14 +4,7 @@
 
 //Define the BYTE data type as an unisigned 8-bit integer
 typedef uint8_t BYTE;
-//Open memory card
-//Repeat until end of card:
-    //Read 512 bytes into a buffer array
-    //If start of a new JPEG
-        //If 1st JPEG .. else if new non-1st JPEG
-    //Else
-        //If already found a jpeg and writing to it, keep writing to it
-//Close any remaining files
+
 int main(int argc, char *argv[])
 {
     //Program should accept only one command line argument after program execution argument
@@ -29,7 +22,7 @@ int main(int argc, char *argv[])
     }
     //Dynamically allocate the memory for a block-sized array
     //ALWAYS CHECK if malloc pointer == null, don't continue running program if this is the case
-    BYTE *pblock_array = malloc(sizeof(BYTE)*512);
+    BYTE *pblock_array = malloc(sizeof(BYTE) * 512);
     if (pblock_array == NULL)
     {
         printf("Malloc for block array failed.\n");
@@ -38,7 +31,7 @@ int main(int argc, char *argv[])
     //Start reading through the blocks, checking for JPEG headers
     int jpgct = 0;
     //Allocate memory for a string that is enough to include characters "###.jpg" AND the NULL terminating character
-    char *jpgname = malloc(sizeof(char)*8);
+    char *jpgname = malloc(sizeof(char) * 8);
     int bytesread;
     FILE *img = NULL;
     while (fread(pblock_array, 1, 512, memcard) == 512)
