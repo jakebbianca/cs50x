@@ -50,12 +50,22 @@ bool check(const char *word)
         return false;
     }
 
-    while (strcasecmp(word, cursor->word) != 0)
+    if (strcasecmp(word, cursor->word) == 0)
     {
-        cursor = cursor->next;
+        return true;
     }
 
-    return true;
+    while (cursor->next != NULL)
+    {
+        cursor = cursor->next;
+
+        if (strcasecmp(word, cursor->word) == 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // Hashes word to a number
