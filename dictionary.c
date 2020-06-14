@@ -161,7 +161,7 @@ bool unload(void)
     {
         if (table[i] == NULL)
         {
-            return true;
+            continue;
         }
 
         node *cursor = table[i];
