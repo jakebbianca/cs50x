@@ -117,7 +117,6 @@ bool load(const char *dictionary)
         wordcount++;
 
         //create a new node
-        //do i need to have a node pointer name in this loop that changes each loop?
         node *n = malloc(sizeof(node));
         strcpy(n->word, word);
         n->next = NULL;
@@ -168,7 +167,7 @@ bool unload(void)
         node *cursor = table[i];
         node *tmp = cursor;
 
-        while (cursor != NULL)
+        while (cursor->next != NULL)
         {
             cursor = cursor->next;
             free(tmp);
