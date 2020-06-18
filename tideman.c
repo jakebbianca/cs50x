@@ -167,34 +167,29 @@ void add_pairs(void)
 void sort_pairs(void)
 {
     // Copy relevant pairs from pairs array
-    pair max;
-    int tmpindex;
+    int n = -1;
+    pair tmp;
 
-    for (int i = 0; i < pair_count - 1; i++)
+    while (n != 0)
     {
-        for (int j = 0; j < pair_count; j++)
-        {
-            max.winner = pairs[i].winner;
-            max.loser = pairs[i].loser;
+        n = 0;
 
-            if (preferences[pairs[i].winner][pairs[i].loser] < preferences[pairs[i].winner][pairs[i].loser])
+        for (int i = 0; i < pair_count - 1; i++)
+        {
+            int j = i + 1;
+            if (preferences[pairs[i].winner][pairs[i].loser] < preferences[pairs[j].winner][pairs[j].loser])
             {
-                max.winner = pairs[j].winner;
-                max.loser = pairs[j].loser;
-                tmpindex = j;
-            }
+                n++;
 
-        if (max.winner == pairs[i].winner && max.loser == pairs[i].loser)
-        {
-            continue;
-        }
-        else
-        {
-            pairs[tmpindex].winner = pairs[i].winner;
-            pairs[tmpindex].loser = pairs[i].loser;
-            pairs[i].winner = max.winner;
-            pairs[i].loser = max.loser;
-        }
+                tmp.winner = pairs[i].winner;
+                tmp.loser = pairs[i].loser;
+
+                pairs[i].winner = pairs[j].winner;
+                pairs[i].loser = pairs[j].loser;
+
+                pairs[j].winner = tmp.winner;
+                pairs[j].loser = tmp.loser;
+            }
         }
     }
     return;
