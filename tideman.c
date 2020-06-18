@@ -107,16 +107,10 @@ bool vote(int rank, string name, int ranks[])
 {
     for (int i = 0; i < candidate_count; i++)
     {
-        if (!strcmp(name, candidates[i]))
+        if (strcmp(name, candidates[i]) == 0)
         {
-            continue;
-        }
-        else if (strcmp(name, candidates[i]) == TRUE)
-        {
-            // Voter's rankth preference is candidate i from candidates[]
-            // ranks[] is an array of integers, so it should accept inteegers and not actual strings
             ranks[rank] = i;
-            return true;
+            return TRUE;
         }
     }
     return false;
