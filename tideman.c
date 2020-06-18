@@ -225,10 +225,8 @@ void print_winner(void)
         if (j == candidate_count)
         {
             printf("%s\n", candidates[i]);
-            return;
         }
     }
-    printf("Failure to print the winner.");
     return;
 }
 
