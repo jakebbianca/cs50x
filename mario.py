@@ -15,7 +15,7 @@ def confirm_height():
 def main(h):
     n = 1
     while n <= h:
-        print(f" " * (h - n), "#" * n, "  ", f"#" * n)
+        print(f" " * (h - n), "#" * n, "", f"#" * n)
         n += 1
 
 h = confirm_height()
