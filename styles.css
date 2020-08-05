@@ -1,0 +1,209 @@
+h1 {
+    margin-top: 14px;
+    margin-bottom: 14px;
+    padding-left: 1.55vw;
+    font-size: 40pt;
+}
+
+h1 a {
+    color: black;
+    text-decoration: none;
+}
+
+h1 a:hover {
+    color: black;
+    text-decoration: none;
+
+}
+
+h2 {
+    text-align: center;
+    font-size: 40pt;
+    margin: 3vh 3vw 3vh 3vw;
+    overflow: hidden;
+}
+
+h3 {
+    font-size: 26pt;
+}
+
+p {
+    font-size: 16pt;
+}
+
+.subloc {
+    float: right;
+    padding-right: 1.55vw;
+}
+
+.bglg {
+    background-color: lightgrey;
+}
+
+.bgwh {
+    background-color: white;
+}
+
+.flexRowContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 150vh;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.flexRow {
+    flex: 1 0 0;
+    vertical-align: middle;
+}
+
+.divNav {
+    position: sticky;
+    top: 0;
+}
+
+.ulNav {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: black;
+    border: 3px solid black;
+    /* sticky is still relatively new, but functions OK upon testing */
+    position: sticky;
+    top: 0;
+}
+
+.liNav {
+    float: left;
+    font-size: 16pt;
+}
+
+.liNavAbout {
+    float: right;
+    font-size: 16pt;
+}
+
+.aNav {
+    display: block;
+    color: white;
+    padding: 14px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.liNav a.aNav:hover {
+    text-decoration: none;
+    background-color: lightgrey;
+    color: black;
+}
+
+.liNavAbout a.aNav:hover {
+    text-decoration: none;
+    background-color: lightgrey;
+    color: black;
+}
+
+.aLink {
+    text-decoration: none;
+}
+
+.imgCentered {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90vw;
+    height: 80vh;
+    min-width: 500px;
+    min-height: 500px;
+    border: 1px solid lightgrey;
+}
+
+.pLong {
+    margin: 5vh 5vw 5vh 5vw;
+}
+
+.divLong {
+    margin: 0 5vw 0 5vw;
+    padding: 0 5vw 0 5vw;
+}
+
+.pSource {
+    color: darkgrey;
+    font-size: 16pt;
+    text-align: center;
+}
+
+.indexDropLi {
+    text-align: center;
+    background-color: black;
+}
+
+.indexDropLi a:hover, .indexDropLi a:focus {
+    color: black;
+    background-color: lightgrey;
+    text-decoration: none;
+}
+
+.indexDropA {
+    color: white;
+}
+
+.wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 960px;
+}
+
+#homeContainer {
+    display: block;
+    height: 80vh;
+}
+
+#indexDropDiv {
+    text-align: center;
+    margin-top: 30vh;
+}
+
+#indexDropBtn {
+    background-color: black;
+    min-width: 30%;
+}
+
+#indexDropUl {
+    background-color: black;
+    min-width: 30%;
+}
+
+.embedYT {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.h3Rules {
+    margin: 5vh 5vw -3vh 5vw
+}
+
+#topBtn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99; /* Make sure it does not overlap */
+  border: 3px solid black;
+  outline: none; /* Remove outline */
+  background-color: black; /* Set a background color */
+  color: white; /* Text color */
+  cursor: pointer; /* Add a mouse pointer on hover */
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 18px;
+}
+
+#topBtn:hover {
+  background-color: lightgrey; /* Add a dark-grey background on hover */
+  color: black;
+}

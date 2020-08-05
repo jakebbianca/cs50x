@@ -1,0 +1,82 @@
+<!-- Emergency goalie in hockey -->
+<!-- Foul out but still play? -->
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <script src="includeStyles.js"></script>
+        <title>Jake - Sports Rules</title>
+    </head>
+    <body>
+        <h1>
+            <a href="index.html">Jake's Website</a>
+            <span class="subloc">Sports Rules</span>
+        </h1>
+        <script src="navBar.js"></script>
+        <div class="wrapper">
+            <div>
+                <h2>Some Rare Sports Rules (That I Appreciate)</h2>
+            </div>
+            <div>
+                <h3 class="h3Rules">Ultimate - The Callahan</h3>
+                <p class="pLong">
+                    Ultimate, a.k.a. ultimate Frisbee, is a sport that has excelled across university campuses in the United States and has slowly but surely become more popular as a
+                    competitive sport. The rules usually seem a bit strange to newcomers who will look to mark similarities to more popular counterparts, but find that it is quite unique
+                    as a hybrid of scoring endzones like American football, movement not dissimilar from football/soccer, and a strict travelling rule for the possessing player, all while
+                    using a flying disc of all items as the focus of the game. Importantly, if the defending team can get the disc on the ground or can intercept the disc in the air, they
+                    immediately take possession and go on the offensive (attacking in the opposite direction that the other team was). The Callahan, named after the Ultimate pioneer, the
+                    late Henry Callahan <a href="https://www.mixcloud.com/skydmagazine/heating-up-5-henry-callahan-remembered/">(podcast with his brother here)</a>, is when the defending
+                    team manages to intercept a pass in the endzone they are attacking. This results in an immediate goal for the intercepting team. As this is a fairly rare event in the
+                    sport, a big celebration like in the below example is the norm.
+                </p>
+                <iframe class="embedYT" width="560" height="315" src="https://www.youtube.com/embed/zbhocM3hvmc"
+                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <h3 class="h3Rules">Ice Hockey - Emergency Goalkeeper</h3>
+                <p class="pLong">
+                    Though the rules differ across professional and amateur leagues of ice hockey, it is common that there is a provision in the rules for an emergency goalkeeper. In many
+                    cases, this essentially allows a team who is unable to play one of the goalkeepers on their roster to find anyone they'd like who is able and willing to sign a short
+                    contract (in the NHL, even simple tryout contracts are used to ensure they have that extra player just in case). This is particularly rare in the NHL, as David Ayres
+                    became just the third to actually see recorded playing time in any NHL game.
+                </p>
+                <iframe class="embedYT" width="560" height="315" src="https://www.youtube.com/embed/OlBsR1WIT0U"
+                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <h3 class="h3Rules">Basketball (NBA) - No Less Than Five Players Per Team</h3>
+                <p class="pLong">
+                    This rule is not the same across different basketball leagues, but in the NBA, the rules explicitly state that each team must field exactly five players at all times.
+                    Combine this with the rule that a player can "foul out" by committing six personal fouls in a single game, normally disqualifying the player for the rest of that game,
+                    and you can start to see where things get interesting. Luckily for us, this situation came up in 2014 when Robert Sacre of the Los Angeles Lakers committed his sixth
+                    foul while he was one of the five active players who had not yet been disqualified or injured up to that point. He continued to play the game, with the caveat that any
+                    further fouls he committed would result in additional technical fouls counted against his team, giving the opposing team an additional two free throws. There is also
+                    <a href="https://youtu.be/W5gz3vIIhkw">an example of an NCAA men's basketball game where one team played nearly eleven minutes at the end of a game with only three
+                    players</a> after a brawl resulted in ejections for all but five of their players being ejected, another fouled out, and yet another was injured.
+                </p>
+                <iframe style="margin-bottom: 5vh" class="embedYT" width="560" height="315" src="https://www.youtube.com/embed/rxHkyPYB5Fk"
+                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+        <button onclick="topFunction()" id="topBtn" title="Return to top of screen">Return to top</button>
+        <script>
+            //Get the button
+            var mybutton = document.getElementById("topBtn");
+
+            // When the user scrolls down 20px from the top of the document, show the button
+            window.onscroll = function() {scrollFunction()};
+
+            function scrollFunction() {
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    mybutton.style.display = "block";
+                } else {
+                    mybutton.style.display = "none";
+                }
+            }
+
+            // When the user clicks on the button, scroll to the top of the document
+            function topFunction() {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }
+        </script>
+    </body>
+</html>
