@@ -87,6 +87,7 @@ main {
     width: 536px;
     height: 46px;
     margin-left: 23px;
+    padding-left: 45px;
 }
 
 .center-form {
@@ -116,6 +117,13 @@ main {
 }
 
 #search-icon {
+    position: relative;
+    color: #9aa0a6;
+    left: 15px;
+    top: 35px;
+}
+
+#search-icon-images {
     position: relative;
     color: #9aa0a6;
     left: 38px;
