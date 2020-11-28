@@ -9,7 +9,7 @@ from . import util
 class newSearchForm(forms.Form):
     q = forms.CharField(label="Search Encyclopedia")
 
-class newForm(forms.Form):
+class newEntryForm(forms.Form):
     title = forms.CharField(label="Entry Title")
     content = forms.CharField(widget=forms.Textarea, label="Content")
 
@@ -17,7 +17,7 @@ class newForm(forms.Form):
 def index(request):
 
     return render(request, "encyclopedia/index.html", {
-        "entries": util.list_entries(), "form": newSearchForm()
+        "entries": util.list_entries(), "searchForm": newSearchForm()
     })
 
 def entry(request, title):
@@ -26,12 +26,12 @@ def entry(request, title):
         return HttpResponseRedirect(reverse("no_entry"))
     
     return render(request, "encyclopedia/entry.html", {
-        "title": title, "content": markdown2.markdown(util.get_entry(title)), "form": newSearchForm()
+        "title": title, "content": markdown2.markdown(util.get_entry(title)), "searchForm": newSearchForm()
     })
 
 def no_entry(request):
     return render(request, "encyclopedia/no_entry.html", {
-        "form": newSearchForm()
+        "searchForm": newSearchForm()
     })
 
 def search(request):
@@ -53,33 +53,47 @@ def search(request):
             filtered = [k for k in entries if q.casefold() in k.casefold()]
 
             return render(request, "encyclopedia/search.html", {
-                "entries": filtered, "q": q, "form": form
+                "entries": filtered, "q": q, "searchForm": form
             })
     
         else:
 
             return render(request, "encyclopedia/index.html", {
-            "entries": util.list_entries(), "form": form
+            "entries": util.list_entries(), "searchForm": form
             })
 
     else:
 
         return render(request, "encyclopedia/search.html", {
-            "entries": [], "form": newSearchForm
+            "entries": [], "searchForm": newSearchForm
         })
 
 def new(request):
 
     if request.method == "POST":
 
-        newForm = newForm(request.POST)
+        entryForm = newEntryForm(request.POST)
 
-        if newForm.is_valid():
+        if entryForm.is_valid():
 
-            title = newForm.cleaned_data["title"]
-            content = newForm.cleaned_data["content"]
-
+            title = entryForm.cleaned_data["title"]
             entries = util.list_entries()
 
+            for entry in entries:
+                if title.casefold() == entry.casefold():
+                    return render(request, "encyclopedia/new.html", {
+                        "searchForm": newSearchForm(), "form": entryForm, "error": f"An entry with the title '{title}' already exists."
+                    })
 
-    return render(request, "encyclopedia/new.html")
+            content = newEntryForm.cleaned_data["content"]
+
+            return render(request, "encyclopedia/new.html", {
+                "searchForm": newSearchForm(), "form": newEntryForm()
+            })
+
+
+
+
+    return render(request, "encyclopedia/new.html", {
+        "searchForm": newSearchForm(), "form": newEntryForm()
+    })
