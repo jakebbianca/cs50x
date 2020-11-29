@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 import markdown2
+import random
 
 from . import util
 
@@ -13,7 +14,7 @@ class newSearchForm(forms.Form):
 
 class newEntryForm(forms.Form):
     title = forms.CharField(label="Entry Title")
-    content = forms.CharField(widget=forms.Textarea, label="Content")
+    content = forms.CharField(widget=forms.Textarea(attrs={"cols": 20, "rows": 5}), label="Content")
 
 class newEditForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea, label="Content")
@@ -145,3 +146,11 @@ def edit(request, title):
         return render(request, "encyclopedia/edit.html", {
             "title": title, "searchForm": newSearchForm(), "form": form
         })
+
+
+def random_entry(request):
+
+    entries = util.list_entries()
+    title = random.choice(entries)
+
+    return HttpResponseRedirect(reverse("entry", kwargs={"title": title}))
