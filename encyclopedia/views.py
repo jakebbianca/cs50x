@@ -13,8 +13,8 @@ class newSearchForm(forms.Form):
     q = forms.CharField(label="Search Encyclopedia")
 
 class newEntryForm(forms.Form):
-    title = forms.CharField(label="Entry Title")
-    content = forms.CharField(widget=forms.Textarea(attrs={"cols": 20, "rows": 5}), label="Content")
+    title = forms.CharField(widget=forms.TextInput(attrs={'class': "title-input"}), label="Title")
+    content = forms.CharField(widget=forms.Textarea)
 
 class newEditForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea, label="Content")
