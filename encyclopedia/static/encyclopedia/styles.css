@@ -13,8 +13,10 @@ h1 {
 }
 
 textarea {
-    height: 50vh;
+    height: 70vh;
+    min-height: 300px;
     width: 80%;
+    min-width: 500px;
 }
 
 .main {
@@ -38,5 +40,5 @@ textarea {
 }
 
 .title-input {
-    margin-bottom: 2em;
+    margin-bottom: 1em;
 }
