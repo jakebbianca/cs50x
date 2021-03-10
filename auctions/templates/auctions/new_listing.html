@@ -3,5 +3,24 @@
 {% block body %}
     <h2>Create Listing</h2>
 
-    TODO
+    <form action="{% url 'new_listing' %}" method="POST">
+        {% csrf_token %}
+        <div class="row mb-3 ml-3">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+        <div class="mb-3">
+            {{ form.min_bid.label_tag }}
+            {{ form.min_bid }}
+        </div>
+        <div class="mb-3">
+            {{ form.img_url.label_tag }}
+            {{ form.img_url }}
+        </div>
+        <input type="submit" value="Submit">
+    </form>
 {% endblock %}

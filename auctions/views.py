@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User
+from .forms import ListingForm
 
 
 def index(request):
@@ -65,8 +66,15 @@ def register(request):
 
 def new_listing(request):
     if request.method == "POST":
-        # TODO
-        return render(request, "auctions/new_listing.html")
+        
+        form = ListingForm(request.POST)
+
+        if form.is_valid:
+
+            return render(request, "auctions/new_listing.html")
 
     else:
-        return render(request, "auctions/new_listing.html")
+
+        form = ListingForm()
+
+        return render(request, "auctions/new_listing.html", {"form": form})

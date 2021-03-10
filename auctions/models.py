@@ -10,6 +10,6 @@ class User(AbstractUser):
 # Users should also optionally be able to provide a URL for an image for the listing and/or a category (e.g. Fashion, Toys, Electronics, Home, etc.).
 class Listing(models.Model):
     title = models.CharField(max_length=100)
-    description = models.TextField
-    min_bid = models.DecimalField(decimal_places=2)
-    img_url = models.URLField()
+    description = models.TextField(max_length=1000)
+    min_bid = models.DecimalField(decimal_places=2, max_digits=11)
+    img_url = models.URLField(max_length=500, blank=True)
