@@ -78,8 +78,3 @@ def new_listing(request):
         form = ListingForm()
 
         return render(request, "auctions/new_listing.html", {"form": form})
-
-
-def form_snippet(request):
-
-    return render(request, "auctions/new_listing.html")

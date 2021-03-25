@@ -4,4 +4,8 @@ from .models import Listing
 class ListingForm(ModelForm):
     class Meta:
         model = Listing
-        fields = ['title', 'description', 'min_bid', 'img_url']
+        fields = ['title', 'description', 'price', 'img_url']
+        labels = {
+            'price': 'Minimum Bid',
+            'img_url': 'Link to Image'
+        }
