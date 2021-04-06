@@ -71,7 +71,14 @@ def new_listing(request):
 
         if form.is_valid:
 
-            return render(request, "auctions/new_listing.html")
+            return render(request, "auctions/new_listing.html", {"form": form})
+
+        else:
+
+            form = ListingForm(request.POST)
+            print(form.errors)
+
+            return render(request, "auctions/new_listing.html", {"form": form})
 
     else:
 

@@ -6,6 +6,6 @@ class ListingForm(ModelForm):
         model = Listing
         fields = ['title', 'description', 'price', 'img_url']
         labels = {
-            'price': 'Minimum Bid',
+            'price': 'Minimum Bid (USD)',
             'img_url': 'Link to Image'
         }

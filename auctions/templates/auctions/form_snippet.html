@@ -10,7 +10,11 @@
     <body>
     {% for field in form %}
         <div class="mb-3">
-            {{ field.errors }}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <p class="text-danger">{{ error|escape }}</p>
+                {% endfor %}
+            {% endif %}
             {{ field.label_tag }}
         </br>
             {{ field }}

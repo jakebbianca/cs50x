@@ -13,7 +13,7 @@ class User(AbstractUser):
 class Listing(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=2000)
-    price = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
+    price = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"), "Bids must be placed for a minimum of $0.01.")])
     img_url = models.URLField(max_length=200, blank=True)
     category = models.CharField(max_length=100)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mylisting')
