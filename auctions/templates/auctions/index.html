@@ -2,6 +2,15 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-
-    TODO
+    <div>
+        <ul class="active-list">
+            {% for listing in listings %}
+                <li>
+                    <div class='list-img-ctn'>
+                        <img src="{{ listing.img_url }}" alt="Missing Image">
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
