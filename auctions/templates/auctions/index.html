@@ -2,12 +2,17 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-    <div>
-        <ul class="active-list">
+    <div class="active-list-ctn">
+        <ul class="active-list d-flex flex-column">
             {% for listing in listings %}
-                <li>
-                    <div class='list-img-ctn'>
-                        <img src="{{ listing.img_url }}" alt="Missing Image">
+                <li class="active-list-item">
+                    <div class="list-img-ctn align-middle text-center">
+                        <img class="list-img" src="{{ listing.img_url }}" alt="Missing Image">
+                    </div>
+                    <div class="list-info-ctn align-middle">
+                        <h3>{{ listing.title }}</h3>
+                        <h4>Current Bid: ${{ listing.price }}</h4>
+                        <p>{{ listing.description }}</p>
                     </div>
                 </li>
             {% endfor %}

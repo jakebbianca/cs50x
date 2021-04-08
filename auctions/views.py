@@ -74,6 +74,8 @@ def new_listing(request):
         form = ListingForm(request.POST)
 
         if form.is_valid:
+            current_user = request.user
+            form.user = current_user.id
             form.save()
             return HttpResponseRedirect(reverse("index"))
 

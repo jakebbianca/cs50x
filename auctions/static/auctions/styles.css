@@ -3,11 +3,36 @@ body {
 }
 
 .active-list {
-    display: block;
     list-style: none;
     margin-block-start: 1em;
     margin-block-end: 1em;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
     padding-inline-start: 40px;
+}
+
+.active-list-item {
+    border-top: 2px solid lightgrey;
+    height: 25%;
+}
+
+.list-img-ctn {
+    height: 200px;
+    width: 300px;
+    border-right: 2px solid lightgrey;
+}
+
+.list-img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.list-info-ctn {
+    width: 75%;
+    height: 100%;
+}
+
+.active-list-item > div {
+    display: table-cell;
+    padding: 8px;
 }
