@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.forms.models import model_to_dict
 
 from .models import User, Listing
 from .forms import ListingForm
@@ -106,5 +107,12 @@ def new_listing(request):
 
 
 @login_required
-def listing(request):
-    return render(request, "auctions/listing.html")
+def listings(request, listing_id):
+
+    #NEED TO WORK ON
+    l = Listing.objects.all().filter(id=listing_id).first()
+    listing = model_to_dict(l)
+
+
+
+    return render(request, "auctions/listing.html", listing)
