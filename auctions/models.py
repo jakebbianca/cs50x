@@ -28,7 +28,7 @@ class Listing(models.Model):
     AUTOIND = 'AUTOIND'
     OTHER = 'OTHER'
     CATEGORIES = [
-        (CF, 'Clothing/Fashion'),( BOOKS, 'Books'), (MMG, 'Movies, Music, & Games'),
+        (CF, 'Clothing/Fashion'), (BOOKS, 'Books'), (MMG, 'Movies, Music, & Games'),
         (ELEC, 'Electronics'), (COMP, 'Computers'), (SMART, 'Smart Home'), (HGT, 'Home, Garden, & Tools'),
         (PET, 'Pet Supplies'), (FG, 'Food & Grocery'), (BH, 'Beauty & Health'),  
         (TKB, 'Toys, Kids, & Baby'), (HAND, 'Handmade'), (SPORTS, 'Sports'),

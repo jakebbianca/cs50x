@@ -74,9 +74,23 @@ def new_listing(request):
         form = ListingForm(request.POST)
 
         if form.is_valid:
-            current_user = request.user
-            form.user = current_user.id
-            form.save()
+            title = request.POST["title"]
+            description = request.POST["description"]
+            price = request.POST["price"]
+            url = request.POST["img_url"]
+            category = request.POST["category"]
+            seller = request.user
+
+            new = Listing.objects.create(
+                title = title,
+                description = description,
+                price = price,
+                img_url = url,
+                category = category,
+                seller = seller,
+            )
+            new.save()
+
             return HttpResponseRedirect(reverse("index"))
 
         else:
