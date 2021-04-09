@@ -103,3 +103,8 @@ def new_listing(request):
         form = ListingForm()
 
         return render(request, "auctions/new_listing.html", {"form": form})
+
+
+@login_required
+def listing(request):
+    return render(request, "auctions/listing.html")
