@@ -2,6 +2,15 @@
 
 {% block body %}
     <h2>Listing</h2>
-    <img src="{{ listing.url_img }}" alt="MISSING IMAGE">
-
+    {% if bid_error %}
+        <div class="alert alert-danger" role="alert">{{ bid_error }}</div>
+    {% endif %}
+    <img src="{{ listing.img_url }}" alt="MISSING IMAGE" style="width: 500px; max-height: 500px;">
+    <h3>Current price for this listing is ${{ listing.price }}.</h3>
+    <span>{{ bid_count }} bids(s) so far. {% if is_leader %} You are the current bid leader. {% endif %}</span>
+    <form action="{% url 'listings' listing.id %}" method="POST">
+        {% csrf_token %}
+        {% include "auctions/form_snippet.html" %}
+        <input type="submit" value="Place Bid">
+    </form>
 {% endblock %}

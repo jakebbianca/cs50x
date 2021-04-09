@@ -42,6 +42,11 @@ class Listing(models.Model):
     category = models.CharField(max_length=100, choices=CATEGORIES, default=CF)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mylisting')
     status = models.BooleanField(default=True)
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
 
-
+class Bid(models.Model):
+    bid = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mybid')
+    winner = models.BooleanField(default=False)

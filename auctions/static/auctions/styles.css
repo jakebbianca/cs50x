@@ -36,3 +36,8 @@ body {
     display: table-cell;
     padding: 8px;
 }
+
+
+.listing-img-ctn {
+    width: 100%
+}

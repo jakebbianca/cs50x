@@ -4,15 +4,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from django.forms.models import model_to_dict
 
-from .models import User, Listing
-from .forms import ListingForm
+from .models import User, Listing, Bid
+from .forms import ListingForm, BidForm
 
 
 def index(request):
     return render(request, "auctions/index.html", 
-        {'listings': Listing.objects.all()
+        {"listings": Listing.objects.all().filter(status=True)
     })
 
 
@@ -109,10 +108,62 @@ def new_listing(request):
 @login_required
 def listings(request, listing_id):
 
-    #NEED TO WORK ON
-    l = Listing.objects.all().filter(id=listing_id).first()
-    listing = model_to_dict(l)
+    if request.method == "POST":
+
+        form = BidForm(request.POST)
+        if form.is_valid:
+            # variables for new Bid object
+            bid = request.POST["bid"]
+            listing = Listing.objects.get(pk=listing_id)
+            # check if bid > previous bid or >= starting price if no other bids
+            # if true, render template again with error message
+            # if not, insert new Bid and update current Listing 'listing'
+            bid_count = Bid.objects.all().filter(listing=listing_id).count()
+            current_price = Listing.objects.all().filter(id=listing_id).first().price
+            if (bid_count > 0 and float(bid) <= current_price) or (bid_count == 0 and float(bid) < current_price):
+                listing = Listing.objects.all().filter(id=listing_id).first()
+                bid_error = "Any bid placed must be greater than the previously leading bid orat least as great as the starting price if no other bids have been placed."
+                return render(request, "auctions/listing.html", {"listing": listing, "form": form, "bid_count": bid_count, 
+                                                                "is_leader": False, "bid_error": bid_error})
+            
+            else:
+
+                new = Bid.objects.create(
+                    bid = bid,
+                    listing = listing,
+                    bidder = request.user
+                )
+                new.save()
+
+                listing.price = bid
+                listing.save()
+
+                return HttpResponseRedirect(reverse("listings", args=[listing_id]))
+
+        else:
+            print(form.errors)
+            return render(request, "auctions/listing.html", {"listing": listing})
+
+    else:
+        if Listing.objects.all().filter(id=listing_id).count() == 0:
+            return HttpResponseRedirect(reverse("dne"))
+
+        bid_count = Bid.objects.all().filter(listing=listing_id).count()
+        # NEED TO FIX -- is_leader not displaying leader on GET
+        if bid_count > 0:
+            leader = Bid.objects.all().filter(listing=listing_id).last()
+            if leader.id == request.user.id:
+                is_leader = True
+            else:
+                is_leader = False
+        else:
+            is_leader = False
+        
+        listing = Listing.objects.all().filter(id=listing_id).first()
+        form = BidForm()
+        return render(request, "auctions/listing.html", {"listing": listing, "form": form, "bid_count": bid_count,
+                                                        "is_leader": is_leader, "bid_error": ""})
 
 
-
-    return render(request, "auctions/listing.html", listing)
+def dne(request):
+    return render(request, "auctions/dne.html")
