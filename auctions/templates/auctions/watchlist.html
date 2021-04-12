@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h2>Your Watchlist</h2>
+<div class="active-list-ctn">
+    <ul class="active-list d-flex flex-column">
+        {% for listing in listings %}
+            <li class="active-list-item">
+                <div class="list-img-ctn align-middle text-center">
+                    <img class="list-img" src="{{ listing.img_url }}" alt="Missing Image">
+                </div>
+                <div class="list-info-ctn align-middle">
+                    <h3><a href="{% url 'listings' listing.id %}">{{ listing.title }}</a></h3>
+                    <h4>Current Bid: ${{ listing.price }}</h4>
+                    <p>{{ listing.description }}</p>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

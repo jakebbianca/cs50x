@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Listing, Bid
+from .models import User, Listing, Bid, Watchlist
 from .forms import ListingForm, BidForm
 
 
@@ -13,6 +13,12 @@ def index(request):
     return render(request, "auctions/index.html", 
         {"listings": Listing.objects.all().filter(status=True)
     })
+
+@login_required
+def watchlist(request):
+    watchlist = Watchlist.objects.all().filter(user=request.user)
+    listings = [k.listing for k in watchlist]
+    return render(request, "auctions/watchlist.html", {"listings": listings})
 
 
 def login_view(request):
@@ -69,6 +75,9 @@ def register(request):
 
 @login_required
 def new_listing(request):
+    # when user submits new listing form, check if form is valid
+    # if valid, create a new Listing and save to the db
+    # if not valid, print errors and render new listing page again with information still filled in
     if request.method == "POST":
         
         form = ListingForm(request.POST)
@@ -99,6 +108,7 @@ def new_listing(request):
 
             return render(request, "auctions/new_listing.html", {"form": form})
 
+    # on GET, render the new listing template with a blank ListingForm
     else:
         form = ListingForm()
 
@@ -108,61 +118,106 @@ def new_listing(request):
 @login_required
 def listings(request, listing_id):
 
+    # define common variables for this view
+    current_user = request.user
+    listing = Listing.objects.get(pk=listing_id)
+    if listing.seller == current_user:
+        seller_check = True
+    else:
+        seller_check = False
+
+    # check if listing is on user's watchlist
+    try:
+        watchlist = Watchlist.objects.get(user=current_user, listing=listing)
+    except:
+        wl_check = False
+    else:
+        wl_check = True
+
+
     if request.method == "POST":
-
-        form = BidForm(request.POST)
-        if form.is_valid:
-            # variables for new Bid object
-            bid = request.POST["bid"]
-            listing = Listing.objects.get(pk=listing_id)
-            # check if bid > previous bid or >= starting price if no other bids
-            # if true, render template again with error message
-            # if not, insert new Bid and update current Listing 'listing'
-            bid_count = Bid.objects.all().filter(listing=listing_id).count()
-            current_price = Listing.objects.all().filter(id=listing_id).first().price
-            if (bid_count > 0 and float(bid) <= current_price) or (bid_count == 0 and float(bid) < current_price):
-                listing = Listing.objects.all().filter(id=listing_id).first()
-                bid_error = "Any bid placed must be greater than the previously leading bid orat least as great as the starting price if no other bids have been placed."
-                return render(request, "auctions/listing.html", {"listing": listing, "form": form, "bid_count": bid_count, 
-                                                                "is_leader": False, "bid_error": bid_error})
-            
-            else:
-
-                new = Bid.objects.create(
-                    bid = bid,
-                    listing = listing,
-                    bidder = request.user
+        # when user presses 'watchlist' button on a given listing
+        if "watch_button" in request.POST:
+            # if listing is on user's watchlist, delete it
+            # if not, create and save it
+            if wl_check == False:
+                new = Watchlist.objects.create(
+                    user = current_user,
+                    listing = listing
                 )
                 new.save()
+            else:
+                Watchlist.objects.get(pk=watchlist.id).delete()
 
-                listing.price = bid
-                listing.save()
 
-                return HttpResponseRedirect(reverse("listings", args=[listing_id]))
+        elif "bid_button" in request.POST:
+            form = BidForm(request.POST)
+            bid_count = Bid.objects.all().filter(listing=listing_id).count()
+            current_price = Listing.objects.all().filter(id=listing_id).first().price
+            # check if seller is trying to bid on their own item
+            if seller_check is True:
+                bid_error = "You cannot bid on your own listing."
+                return render(request, "auctions/listing.html", {"listing": listing, "form": form, "bid_count": bid_count, 
+                                                                    "is_leader": False, "bid_error": bid_error, "wl_check": wl_check,
+                                                                    "seller_check": seller_check})
+            # check bid for errors and submit if acceptable
+            if form.is_valid:
+                # variables for new Bid object
+                bid = request.POST["bid"]
+                # check if bid > previous bid or >= starting price if no other bids
+                # if true, render template again with error message
+                # if not, insert new Bid and update current Listing 'listing'
+                if (bid_count > 0 and float(bid) <= current_price) or (bid_count == 0 and float(bid) < current_price):
+                    listing = Listing.objects.all().filter(id=listing_id).first()
+                    bid_error = "Any bid placed must be greater than the previously leading bid or at least as great as the starting price if no other bids have been placed."
+                    return render(request, "auctions/listing.html", {"listing": listing, "form": form, "bid_count": bid_count, 
+                                                                    "is_leader": False, "bid_error": bid_error, "wl_check": wl_check,
+                                                                    "seller_check": seller_check})
+                
+                # once confirmed there are no errors, create/save new bid to db
+                # also update current price on listing before reloading page
+                else:
 
-        else:
-            print(form.errors)
-            return render(request, "auctions/listing.html", {"listing": listing})
+                    new = Bid.objects.create(
+                        bid = bid,
+                        listing = listing,
+                        bidder = current_user
+                    )
+                    new.save()
 
+                    listing.price = bid
+                    listing.winner = current_user
+                    listing.save()
+
+        elif "close_button" in request.POST:
+            # close the listing
+            listing.status = False
+            listing.save()
+
+        # if post is successful, redirect to new instance of listing page
+        return HttpResponseRedirect(reverse("listings", args=[listing_id]))
+
+    # GET
     else:
+        # check if listing exists in db; if not, redirect to 404 page
         if Listing.objects.all().filter(id=listing_id).count() == 0:
             return HttpResponseRedirect(reverse("dne"))
 
-        bid_count = Bid.objects.all().filter(listing=listing_id).count()
+        bid_count = Bid.objects.all().filter(listing=listing).count()
         # NEED TO FIX -- is_leader not displaying leader on GET
         if bid_count > 0:
-            leader = Bid.objects.all().filter(listing=listing_id).last()
-            if leader.id == request.user.id:
+            leader = Bid.objects.all().filter(listing=listing).last()
+            if leader.bidder.id == current_user.id:
                 is_leader = True
             else:
                 is_leader = False
         else:
             is_leader = False
         
-        listing = Listing.objects.all().filter(id=listing_id).first()
         form = BidForm()
         return render(request, "auctions/listing.html", {"listing": listing, "form": form, "bid_count": bid_count,
-                                                        "is_leader": is_leader, "bid_error": ""})
+                                                        "is_leader": is_leader, "bid_error": "", "wl_check": wl_check,
+                                                        "seller_check": seller_check})
 
 
 def dne(request):

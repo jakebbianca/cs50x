@@ -50,3 +50,8 @@ class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
     bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mybid')
     winner = models.BooleanField(default=False)
+
+
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mywatchlist')
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='mywatchlisting')
