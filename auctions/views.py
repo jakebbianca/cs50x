@@ -220,5 +220,14 @@ def listings(request, listing_id):
                                                         "seller_check": seller_check})
 
 
+def categories(request):
+    categories = Listing.CATEGORIES
+    return render(request, "auctions/categories.html", {"categories": categories})
+
+
+def category(request, category_id):
+    return render(request, "auctions/category.html")
+
+
 def dne(request):
     return render(request, "auctions/dne.html")
