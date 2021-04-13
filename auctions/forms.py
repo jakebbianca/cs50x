@@ -1,6 +1,6 @@
 from django.forms import ModelForm, URLInput, Select
 from django.utils.translation import gettext_lazy as _
-from .models import Listing, Bid
+from .models import Listing, Bid, Comment
 
 
 class ListingForm(ModelForm):
@@ -42,4 +42,19 @@ class BidForm(ModelForm):
                 'max_digits': _("Maximum bid allowed is $9,999,999,999.99."),
                 'decimal_places': _("Price must include exactly two digits for whole cents (USD).")
             }
+        }
+
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        labels = {
+            'content': _("Make a comment on this listing:")
+        }
+        help_texts = {
+            'content': _("Enter your comment here.")
+        }
+        error_messages = {
+            'max_length': _("Comments may be up to 500 characters long.")
         }

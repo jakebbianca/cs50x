@@ -5,8 +5,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Listing, Bid, Watchlist
-from .forms import ListingForm, BidForm
+from .models import User, Listing, Bid, Watchlist, Comment
+from .forms import ListingForm, BidForm, CommentForm
 
 
 def index(request):
@@ -121,6 +121,13 @@ def listings(request, listing_id):
     # define common variables for this view
     current_user = request.user
     listing = Listing.objects.get(pk=listing_id)
+    bid_errors = []
+
+    try:
+        comments = Comment.objects.all().filter(listing=listing)
+    except:
+        comments = []
+
     if listing.seller == current_user:
         seller_check = True
     else:
@@ -156,9 +163,9 @@ def listings(request, listing_id):
             current_price = Listing.objects.all().filter(id=listing_id).first().price
             # check if seller is trying to bid on their own item
             if seller_check is True:
-                bid_error = "You cannot bid on your own listing."
-                return render(request, "auctions/listing.html", {"listing": listing, "form": form, "bid_count": bid_count, 
-                                                                    "is_leader": False, "bid_error": bid_error, "wl_check": wl_check,
+                bid_errors.append("You cannot bid on your own listing.")
+                return render(request, "auctions/listing.html", {"listing": listing, "form": form, "comment_form": comment_form, "bid_count": bid_count, 
+                                                                    "is_leader": False, "bid_errors": bid_errors, "wl_check": wl_check,
                                                                     "seller_check": seller_check})
             # check bid for errors and submit if acceptable
             if form.is_valid:
@@ -169,9 +176,9 @@ def listings(request, listing_id):
                 # if not, insert new Bid and update current Listing 'listing'
                 if (bid_count > 0 and float(bid) <= current_price) or (bid_count == 0 and float(bid) < current_price):
                     listing = Listing.objects.all().filter(id=listing_id).first()
-                    bid_error = "Any bid placed must be greater than the previously leading bid or at least as great as the starting price if no other bids have been placed."
-                    return render(request, "auctions/listing.html", {"listing": listing, "form": form, "bid_count": bid_count, 
-                                                                    "is_leader": False, "bid_error": bid_error, "wl_check": wl_check,
+                    bid_errors.append("Any bid placed must be greater than the previously leading bid or at least as great as the starting price if no other bids have been placed.")
+                    return render(request, "auctions/listing.html", {"listing": listing, "form": form, "comment_form": comment_form, "bid_count": bid_count, 
+                                                                    "is_leader": False, "bid_errors": bid_errors, "wl_check": wl_check,
                                                                     "seller_check": seller_check})
                 
                 # once confirmed there are no errors, create/save new bid to db
@@ -194,6 +201,17 @@ def listings(request, listing_id):
             listing.status = False
             listing.save()
 
+        elif "comment_button" in request.POST:
+            comment_form = CommentForm(request.POST)
+            if comment_form.is_valid:
+                content = request.POST['content']
+                new = Comment.objects.create(
+                    user = request.user,
+                    listing = listing,
+                    content = content
+                )
+                new.save()
+
         # if post is successful, redirect to new instance of listing page
         return HttpResponseRedirect(reverse("listings", args=[listing_id]))
 
@@ -215,7 +233,8 @@ def listings(request, listing_id):
             is_leader = False
         
         form = BidForm()
-        return render(request, "auctions/listing.html", {"listing": listing, "form": form, "bid_count": bid_count,
+        comment_form = CommentForm()
+        return render(request, "auctions/listing.html", {"listing": listing, "form": form, "comment_form": comment_form, "bid_count": bid_count,
                                                         "is_leader": is_leader, "bid_error": "", "wl_check": wl_check,
                                                         "seller_check": seller_check})
 

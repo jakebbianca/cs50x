@@ -55,3 +55,9 @@ class Bid(models.Model):
 class Watchlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mywatchlist')
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='mywatchlisting')
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mycomment')
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='commentlisting')
+    content = models.TextField(max_length=500)
