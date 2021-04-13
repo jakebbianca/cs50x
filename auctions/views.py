@@ -225,8 +225,15 @@ def categories(request):
     return render(request, "auctions/categories.html", {"categories": categories})
 
 
-def category(request, category_id):
-    return render(request, "auctions/category.html")
+def category(request, key):
+    categories = Listing.CATEGORIES
+    for i, j in categories:
+        if i == key:
+            category_name = j
+    if not category_name:
+        return HttpResponseRedirect(reverse("dne"))
+    listings = Listing.objects.all().filter(category=key, status=True)
+    return render(request, "auctions/category.html", {"listings": listings, "category_name":category_name})
 
 
 def dne(request):
