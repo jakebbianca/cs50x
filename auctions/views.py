@@ -159,14 +159,15 @@ def listings(request, listing_id):
 
         elif "bid_button" in request.POST:
             form = BidForm(request.POST)
-            bid_count = Bid.objects.all().filter(listing=listing_id).count()
+            bid_count = Bid.objects.all().filter(listing=listing).count()
             current_price = Listing.objects.all().filter(id=listing_id).first().price
+            comments = Comment.objects.all().filter(listing=lisitng)
             # check if seller is trying to bid on their own item
             if seller_check is True:
                 bid_errors.append("You cannot bid on your own listing.")
                 return render(request, "auctions/listing.html", {"listing": listing, "form": form, "comment_form": comment_form, "bid_count": bid_count, 
                                                                     "is_leader": False, "bid_errors": bid_errors, "wl_check": wl_check,
-                                                                    "seller_check": seller_check})
+                                                                    "seller_check": seller_check, "comments": comments})
             # check bid for errors and submit if acceptable
             if form.is_valid:
                 # variables for new Bid object
@@ -179,7 +180,7 @@ def listings(request, listing_id):
                     bid_errors.append("Any bid placed must be greater than the previously leading bid or at least as great as the starting price if no other bids have been placed.")
                     return render(request, "auctions/listing.html", {"listing": listing, "form": form, "comment_form": comment_form, "bid_count": bid_count, 
                                                                     "is_leader": False, "bid_errors": bid_errors, "wl_check": wl_check,
-                                                                    "seller_check": seller_check})
+                                                                    "seller_check": seller_check, "comments": comments})
                 
                 # once confirmed there are no errors, create/save new bid to db
                 # also update current price on listing before reloading page
@@ -236,7 +237,7 @@ def listings(request, listing_id):
         comment_form = CommentForm()
         return render(request, "auctions/listing.html", {"listing": listing, "form": form, "comment_form": comment_form, "bid_count": bid_count,
                                                         "is_leader": is_leader, "bid_error": "", "wl_check": wl_check,
-                                                        "seller_check": seller_check})
+                                                        "seller_check": seller_check, "comments": comments})
 
 
 def categories(request):
@@ -246,13 +247,17 @@ def categories(request):
 
 def category(request, key):
     categories = Listing.CATEGORIES
+    # check if category is valid
+    # if not, redirect to dne
+    # if so, send to correct category page
+    category_name = None
     for i, j in categories:
         if i == key:
             category_name = j
     if not category_name:
         return HttpResponseRedirect(reverse("dne"))
     listings = Listing.objects.all().filter(category=key, status=True)
-    return render(request, "auctions/category.html", {"listings": listings, "category_name":category_name})
+    return render(request, "auctions/category.html", {"listings": listings, "category_name": category_name})
 
 
 def dne(request):
