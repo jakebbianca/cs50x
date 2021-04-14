@@ -1,44 +1,56 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <form action="{% url 'listings' listing.id %}" novalidate method="POST">
-        {% csrf_token %}
-        <button type="submit" name="watch_button" class="btn {% if wl_check is False %}btn-secondary{% else %}btn-success{% endif %} btn-sm" value="WATCHLIST">WATCHLIST</button>
-    <h2>{{ listing.title }}</h2>
-    {% if bid_errors %}
-        {% for error in bid_errors %}
-            <div class="alert alert-danger" role="alert">{{ error }}</div>
-        {% endfor %}
-    {% endif %}
-    {% if listing.status is False %}
-        <div class="alert alert-secondary" role="alert">This listing has ended. {% if is_leader is True %}You won!{% endif %}</div>
-    {% endif %}
-    <img src="{{ listing.img_url }}" alt="MISSING IMAGE" style="width: 500px; max-height: 500px;">
-    <h3>Current price for this listing is ${{ listing.price }}.</h3>
-    <span>{{ bid_count }} bids(s) so far. {% if is_leader is True %} You are the current bid leader.{% endif %}</span>
-    <form action="{% url 'listings' listing.id %}" method="POST">
-        {% csrf_token %}
-        {% include "auctions/form_snippet.html" %}
-        <button type="submit" name="bid_button" class="btn btn-primary" value="Place Bid">Place Bid</button>
-    </form>
-    {% if seller_check is True %}
-        <form action="{% url 'listings' listing.id %}" novalidate method="POST">
+    <div class="error_div">
+        {% if listing.status is False %}
+            <div class="alert alert-secondary" role="alert">This listing has ended. {% if is_leader is True %}You won!{% endif %}</div>
+        {% endif %}
+        <h2>{{ listing.title }}</h2>
+        {% if bid_errors %}
+            {% for error in bid_errors %}
+                <div class="alert alert-danger" role="alert">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="d-flex align-items-center">
+        <div class="flex-shrink-0">
+            <form action="{% url 'listings' listing.id %}" novalidate method="POST">
+                {% csrf_token %}
+                <button type="submit" name="watch_button" class="btn {% if wl_check is False %}btn-secondary{% else %}btn-success{% endif %} btn-sm mb-3" value="WATCHLIST">WATCHLIST</button>
+            </form>
+            <img src="{{ listing.img_url }}" alt="MISSING IMAGE" style="width: 500px; max-height: 500px;">
+        </div>
+        <div class="flex-grow-1 ms-3">
+            <h3>Current price for this listing is ${{ listing.price }}.</h3>
+            <span>{{ bid_count }} bids(s) so far. {% if is_leader is True %} You are the current bid leader.{% endif %}</span>
+            <form action="{% url 'listings' listing.id %}" method="POST">
+                {% csrf_token %}
+                {% include "auctions/form_snippet.html" %}
+                <button type="submit" name="bid_button" class="btn btn-primary" value="Place Bid">Place Bid</button>
+            </form>
+            {% if seller_check is True %}
+                <form action="{% url 'listings' listing.id %}" novalidate method="POST">
+                    {% csrf_token %}
+                    <button type="submit" name="close_button" class="mt-3 btn btn-danger" value="End this listing">End this listing</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    <div class="d-flex flex-fill">
+        <form action="{% url 'listings' listing.id %}" class="mt-3" method="POST">
             {% csrf_token %}
-            <button type="submit" name="close_button" class="mt-3 btn btn-danger" value="End this listing">End this listing</button>
+            {% include "auctions/comment_snippet.html" %}
+            <button type="submit" name="comment_button" class="mt-1 btn btn-primary" value="Submit Comment">Submit Comment</button>
         </form>
-    {% endif %}
-    <form action="{% url 'listings' listing.id %}" class="mt-3" method="POST">
-        {% csrf_token %}
-        {% include "auctions/comment_snippet.html" %}
-        <button type="submit" name="comment_button" class="mt-1 btn btn-primary" value="Submit Comment">Submit Comment</button>
-    </form>
-    <h3>Comments</h3>
+    </div>
     {% if comments %}
         {% for comment in comments %}
-            <p>{{ comment.content }}</p>
-            <p>By {{ comment.user }}</p>
+            <div class="d-flex flex-fill">
+                <p>{{ comment.content }}</p>
+                <p>By {{ comment.user }}</p>
+            </div>
         {% endfor %}
     {% else %}
-        <div class="alert alert-secondary" role="alert">No comments!</div>
+        <div class="alert alert-secondary" role="alert">Be the first one to submit a comment on this listing!</div>
     {% endif %}
 {% endblock %}
