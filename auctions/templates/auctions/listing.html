@@ -12,17 +12,17 @@
             {% endfor %}
         {% endif %}
     </div>
-    <div class="d-flex align-items-center">
-        <div class="flex-shrink-0">
+    <div class="d-flex flex-wrap align-items-center">
+        <div class="flex-grid-0th mb-3">
             <form action="{% url 'listings' listing.id %}" novalidate method="POST">
                 {% csrf_token %}
                 <button type="submit" name="watch_button" class="btn {% if wl_check is False %}btn-secondary{% else %}btn-success{% endif %} btn-sm mb-3" value="WATCHLIST">WATCHLIST</button>
             </form>
-            <img src="{{ listing.img_url }}" alt="MISSING IMAGE" style="width: 500px; max-height: 500px;">
+            <img src="{{ listing.img_url }}" alt="MISSING IMAGE" class="listing-img">
         </div>
-        <div class="flex-grow-1 ms-3">
+        <div class="flex-grid-1st ms-3 mb-3">
             <h3>Current price for this listing is <span class="bid-text">${{ listing.price }}</span>.</h3>
-            <span>{{ bid_count }} bids(s) so far. {% if is_leader is True %} <span class="leader-text">You are the current bid leader.</span>{% endif %}</span>
+            <span>{{ bid_count }} bid(s) so far. {% if is_leader is True %} <span class="leader-text">You are the current bid leader.</span>{% endif %}</span>
             <form action="{% url 'listings' listing.id %}" method="POST">
                 {% csrf_token %}
                 {% include "auctions/form_snippet.html" %}
@@ -35,14 +35,14 @@
                 </form>
             {% endif %}
         </div>
-    </div>
-    <div class="d-flex flex-fill">
-        <form action="{% url 'listings' listing.id %}" class="flex-shrink-0 mt-3 mr-5" method="POST">
-            {% csrf_token %}
-            {% include "auctions/comment_snippet.html" %}
-            <button type="submit" name="comment_button" class="mt-1 btn btn-primary" value="Submit Comment">Submit Comment</button>
-        </form>
-        <div class="flex-grow-1 justify-content-center mt-2">
+        <div class="flex-grid-0th">
+            <form action="{% url 'listings' listing.id %}" method="POST">
+                {% csrf_token %}
+                {% include "auctions/comment_snippet.html" %}
+                <button type="submit" name="comment_button" class="mt-1 btn btn-primary" value="Submit Comment">Submit Comment</button>
+            </form>
+        </div>
+        <div class="flex-grid-1st ml-3">
             <h3>Comments</h3>
             {% if comments %}
                 {% for comment in comments %}

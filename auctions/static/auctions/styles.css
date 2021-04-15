@@ -28,7 +28,7 @@ a.listing-link:hover {
 .list-img-ctn {
     height: 200px;
     width: 300px;
-    border-right: 1px solid lightgrey;
+    border-right: 2px solid lightgrey;
 }
 
 .list-img {
@@ -70,8 +70,20 @@ a.listing-link:hover {
     text-align: center;
 }
 
+.listing-img {
+    max-width: 415px;
+}
+
 .category-item a {
     text-decoration: none;
+}
+
+.flex-grid-0th {
+    flex: 0 0 500px;
+}
+
+.flex-grid-1st {
+    flex: 1 0 -webkit-calc(100% - 550px);
 }
 
 .comment-ctn {
