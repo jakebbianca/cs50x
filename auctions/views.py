@@ -161,7 +161,7 @@ def listings(request, listing_id):
             form = BidForm(request.POST)
             bid_count = Bid.objects.all().filter(listing=listing).count()
             current_price = Listing.objects.all().filter(id=listing_id).first().price
-            comments = Comment.objects.all().filter(listing=lisitng)
+            comments = Comment.objects.all().filter(listing=listing)
             # check if seller is trying to bid on their own item
             if seller_check is True:
                 bid_errors.append("You cannot bid on your own listing.")

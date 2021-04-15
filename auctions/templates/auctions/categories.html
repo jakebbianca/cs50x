@@ -2,7 +2,9 @@
 
 {% block body %}
     <h2>Categories</h2>
-    {% for key, category in categories %}
-        <p><a href="{% url 'category' key %}">{{ category }}</a></p>
-    {% endfor %}
+    <div class="d-flex flex-wrap align-items-center category-ctn">
+            {% for key, category in categories %}
+                <div class="category-item"><a href="{% url 'category' key %}">{{ category }}</a></div>
+            {% endfor %}
+    </div>
 {% endblock %}
