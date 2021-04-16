@@ -17,7 +17,7 @@ a.listing-link:hover {
     margin-block-end: 1em;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
-    padding-inline-start: 40px;
+    padding-inline-start: 0px;
 }
 
 .active-list-item {
@@ -38,7 +38,11 @@ a.listing-link:hover {
 
 .list-info-ctn {
     height: 200px;
-    overflow: hidden;
+    width: -webkit-calc(100% - 250px);
+}
+
+.list-info-ctn p {
+    max-height: 96px;
 }
 
 .active-list-item > div {
@@ -60,7 +64,7 @@ a.listing-link:hover {
 }
 
 .category-ctn {
-    width: 100vw;
+    width: 95vw;
     height: 60vh;
 }
 
@@ -96,4 +100,36 @@ a.listing-link:hover {
 
 .content-ctn {
     width: 80%;
+}
+
+.content-ctn span {
+    max-height: 76px;
+    overflow: hidden;
+}
+
+@media only screen and (max-width: 800px) {
+
+    h2 {
+        text-align: center;
+    }
+
+    .list-info-ctn {
+        width: -webkit-calc(100vw - 250px);
+        text-align: center;
+    }
+
+    .list-info-ctn p {
+        display: none;
+    }
+
+    .list-info-ctn h3, h4 {
+        width: 100%;
+        text-align: center;
+    }
+
+    .flex-grid-0th, .flex-grid-1st {
+        flex: 0 1 500px;
+        margin-bottom: 2em;
+    }
+
 }
