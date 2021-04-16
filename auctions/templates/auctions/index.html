@@ -2,20 +2,24 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-    <div class="active-list-ctn">
-        <ul class="active-list d-flex flex-column">
-            {% for listing in listings %}
-                <li class="active-list-item">
-                    <div class="list-img-ctn align-middle text-center">
-                        <a href="{% url 'listings' listing.id %}"><img class="list-img" src="{{ listing.img_url }}" alt="Missing Image"></a>
-                    </div>
-                    <div class="list-info-ctn align-middle">
-                        <h3><a class="listing-link" href="{% url 'listings' listing.id %}">{{ listing.title }}</a></h3>
-                        <h4>Current Bid: ${{ listing.price }}</h4>
-                        <p>{{ listing.description }}</p>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+    {% if not listings %}
+        <div class="alert alert-secondary" role="alert">There are no active listings.</div>
+    {% else %}
+        <div class="active-list-ctn">
+            <ul class="active-list d-flex flex-column">
+                {% for listing in listings %}
+                    <li class="active-list-item">
+                        <div class="list-img-ctn align-middle text-center">
+                            <a href="{% url 'listings' listing.id %}"><img class="list-img" src="{{ listing.img_url }}" alt="Missing Image"></a>
+                        </div>
+                        <div class="list-info-ctn align-middle">
+                            <h3><a class="listing-link" href="{% url 'listings' listing.id %}">{{ listing.title }}</a></h3>
+                            <h4>Current Bid: ${{ listing.price }}</h4>
+                            <p>{{ listing.description }}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
 {% endblock %}

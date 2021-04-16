@@ -2,7 +2,7 @@ body {
     padding: 10px;
 }
 
-body h2 {
+.listing-title {
     margin-left: 1em;
 }
 
@@ -83,6 +83,7 @@ a.listing-link:hover {
 
 .listing-img {
     max-width: 415px;
+    max-height: 415px;
 }
 
 .category-item a {
@@ -99,6 +100,12 @@ a.listing-link:hover {
     flex: 1 0 -webkit-calc(100vw - 600px);
     max-width: -webkit-calc(100vw - 600px);
     margin-bottom: 3em;
+}
+
+.flex-grid-1st p {
+    word-break: break-word;
+    overflow: scroll;
+    margin-top: 1em;
 }
 
 .flex-grid-bid-form {
@@ -169,7 +176,7 @@ a.listing-link:hover {
     }
 
     .comment-margin {
-        margin-left: 5em;
+        margin-left: 1em;
     }
 
     #comment-form-ctn {
