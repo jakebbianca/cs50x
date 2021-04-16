@@ -12,15 +12,15 @@
             {% endfor %}
         {% endif %}
     </div>
-    <div class="d-flex flex-wrap align-items-center justify-content-center">
-        <div class="flex-grid-0th mb-3">
+    <div class="d-flex flex-wrap justify-content-center">
+        <div class="flex-grid-0th ml-3">
             <form action="{% url 'listings' listing.id %}" novalidate method="POST">
                 {% csrf_token %}
                 <button type="submit" name="watch_button" class="btn {% if wl_check is False %}btn-secondary{% else %}btn-success{% endif %} btn-sm mb-3" value="WATCHLIST">WATCHLIST</button>
             </form>
             <img src="{{ listing.img_url }}" alt="MISSING IMAGE" class="listing-img">
         </div>
-        <div class="flex-grid-1st ms-3 mb-3">
+        <div class="flex-grid-1st flex-grid-bid-form ml-3">
             <h3>Current price for this listing is <span class="bid-text">${{ listing.price }}</span>.</h3>
             <span>{{ bid_count }} bid(s) so far. {% if is_leader is True %} <span class="leader-text">You are the current bid leader.</span>{% endif %}</span>
             <form action="{% url 'listings' listing.id %}" method="POST">
@@ -35,23 +35,23 @@
                 </form>
             {% endif %}
         </div>
-        <div class="flex-grid-0th">
-            <form action="{% url 'listings' listing.id %}" method="POST">
+        <div id="comment-form-ctn" class="flex-grid-0th comment-margin">
+            <form class="comment-form" action="{% url 'listings' listing.id %}" method="POST">
                 {% csrf_token %}
                 {% include "auctions/comment_snippet.html" %}
                 <button type="submit" name="comment_button" class="mt-1 btn btn-primary" value="Submit Comment">Submit Comment</button>
             </form>
         </div>
-        <div class="flex-grid-1st ml-3">
+        <div class="flex-grid-1st flex-grid-comments {% if comments %}comment-margin{% else %}no-comment-margin{% endif %}">
             <h3>Comments</h3>
             {% if comments %}
                 {% for comment in comments %}
                     <div class="comment-ctn mb-3">
                         <div class="user-ctn">
-                            <span class="font-weight-bold mr-3">{{ comment.user }}</span>
+                            <p class="font-weight-bold">{{ comment.user }}</p>
                         </div>
                         <div class="content-ctn">
-                            <span>{{ comment.content }}</span>
+                            <p>{{ comment.content }}</p>
                         </div>
                     </div>
                 {% endfor %}
