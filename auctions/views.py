@@ -120,10 +120,14 @@ def listings(request, listing_id):
 
     # initialize common variables for this view
     current_user = request.user
-    listing = Listing.objects.get(pk=listing_id)
     bid_errors = []
     comment_form = CommentForm()
     form = BidForm()
+
+    try:
+        listing = Listing.objects.get(pk=listing_id)
+    except:
+        return HttpResponseRedirect(reverse("dne"))
 
     try:
         comments = Comment.objects.all().filter(listing=listing)

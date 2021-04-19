@@ -23,17 +23,19 @@
         <div class="flex-grid-1st flex-grid-bid-form ml-3">
             <h3>Current price for this listing is <span class="bid-text">${{ listing.price }}</span>.</h3>
             <p>Listed by {{ listing.seller }}.</p>
-            <span>{{ bid_count }} bid(s) so far. {% if is_leader is True %} <span class="leader-text">You are the current bid leader.</span>{% endif %}</span>
-            <form action="{% url 'listings' listing.id %}" method="POST">
-                {% csrf_token %}
-                {% include "auctions/form_snippet.html" %}
-                <button type="submit" name="bid_button" class="btn btn-primary" value="Place Bid">Place Bid</button>
-            </form>
-            {% if seller_check is True %}
-                <form action="{% url 'listings' listing.id %}" novalidate method="POST">
+            {% if listing.status is True %}
+                <span>{{ bid_count }} bid(s) so far. {% if is_leader is True %} <span class="leader-text">You are the current bid leader.</span>{% endif %}</span>
+                <form action="{% url 'listings' listing.id %}" method="POST">
                     {% csrf_token %}
-                    <button type="submit" name="close_button" class="mt-3 btn btn-danger" value="End this listing">End this listing</button>
+                    {% include "auctions/form_snippet.html" %}
+                    <button type="submit" name="bid_button" class="btn btn-primary" value="Place Bid">Place Bid</button>
                 </form>
+                {% if seller_check is True %}
+                    <form action="{% url 'listings' listing.id %}" novalidate method="POST">
+                        {% csrf_token %}
+                        <button type="submit" name="close_button" class="mt-3 btn btn-danger" value="End this listing">End this listing</button>
+                    </form>
+                {% endif %}
             {% endif %}
             <p>{{ listing.description }}</p>
         </div>
