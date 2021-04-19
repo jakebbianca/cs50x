@@ -118,10 +118,12 @@ def new_listing(request):
 @login_required
 def listings(request, listing_id):
 
-    # define common variables for this view
+    # initialize common variables for this view
     current_user = request.user
     listing = Listing.objects.get(pk=listing_id)
     bid_errors = []
+    comment_form = CommentForm()
+    form = BidForm()
 
     try:
         comments = Comment.objects.all().filter(listing=listing)
@@ -141,6 +143,17 @@ def listings(request, listing_id):
     else:
         wl_check = True
 
+    bid_count = Bid.objects.all().filter(listing=listing).count()
+    # check if user is the current bid leader
+    if bid_count > 0:
+        leader = Bid.objects.all().filter(listing=listing).last().bidder
+        if leader == current_user:
+            is_leader = True
+        else:
+            is_leader = False
+    else:
+        is_leader = False
+
 
     if request.method == "POST":
         # when user presses 'watchlist' button on a given listing
@@ -158,8 +171,7 @@ def listings(request, listing_id):
 
 
         elif "bid_button" in request.POST:
-            form = BidForm(request.POST)
-            bid_count = Bid.objects.all().filter(listing=listing).count()
+            form = BidForm(request.POST)   
             current_price = Listing.objects.all().filter(id=listing_id).first().price
             comments = Comment.objects.all().filter(listing=listing)
             # check if seller is trying to bid on their own item
@@ -173,15 +185,17 @@ def listings(request, listing_id):
                 # variables for new Bid object
                 bid = request.POST["bid"]
                 # check if bid > previous bid or >= starting price if no other bids
-                # if true, render template again with error message
-                # if not, insert new Bid and update current Listing 'listing'
                 if (bid_count > 0 and float(bid) <= current_price) or (bid_count == 0 and float(bid) < current_price):
                     listing = Listing.objects.all().filter(id=listing_id).first()
                     bid_errors.append("Any bid placed must be greater than the previously leading bid or at least as great as the starting price if no other bids have been placed.")
+
+                if is_leader is True:
+                    bid_errors.append("You are already the leading bidder for this listing and thus cannot place a new bid.")
+
+                if bid_errors:
                     return render(request, "auctions/listing.html", {"listing": listing, "form": form, "comment_form": comment_form, "bid_count": bid_count, 
                                                                     "is_leader": False, "bid_errors": bid_errors, "wl_check": wl_check,
                                                                     "seller_check": seller_check, "comments": comments})
-                
                 # once confirmed there are no errors, create/save new bid to db
                 # also update current price on listing before reloading page
                 else:
@@ -221,20 +235,7 @@ def listings(request, listing_id):
         # check if listing exists in db; if not, redirect to 404 page
         if Listing.objects.all().filter(id=listing_id).count() == 0:
             return HttpResponseRedirect(reverse("dne"))
-
-        bid_count = Bid.objects.all().filter(listing=listing).count()
-        # NEED TO FIX -- is_leader not displaying leader on GET
-        if bid_count > 0:
-            leader = Bid.objects.all().filter(listing=listing).last()
-            if leader.bidder.id == current_user.id:
-                is_leader = True
-            else:
-                is_leader = False
-        else:
-            is_leader = False
         
-        form = BidForm()
-        comment_form = CommentForm()
         return render(request, "auctions/listing.html", {"listing": listing, "form": form, "comment_form": comment_form, "bid_count": bid_count,
                                                         "is_leader": is_leader, "bid_error": "", "wl_check": wl_check,
                                                         "seller_check": seller_check, "comments": comments})
@@ -258,6 +259,11 @@ def category(request, key):
         return HttpResponseRedirect(reverse("dne"))
     listings = Listing.objects.all().filter(category=key, status=True)
     return render(request, "auctions/category.html", {"listings": listings, "category_name": category_name})
+
+@login_required
+def won(request):
+    listings = Listing.objects.filter(winner=request.user).all()
+    return render(request, "auctions/won.html", {"listings": listings})
 
 
 def dne(request):

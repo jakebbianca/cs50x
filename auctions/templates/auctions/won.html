@@ -1,9 +1,9 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Your Watchlist</h2>
+    <h2>Won Listings</h2>
     {% if not listings %}
-        <div class="alert alert-secondary" role="alert">You have no listings on your watchlist.</div>
+        <div class="alert alert-secondary" role="alert">You have not won any listings yet!</div>
     {% else %}
         <div class="active-list-ctn">
             <ul class="active-list d-flex flex-column">
