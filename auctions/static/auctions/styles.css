@@ -49,7 +49,7 @@ a.listing-link:hover {
     max-height: 96px;
     width: 100%;
     word-break: break-word;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .active-list-item > div {
@@ -104,7 +104,7 @@ a.listing-link:hover {
 
 .flex-grid-1st p {
     word-break: break-word;
-    overflow: scroll;
+    overflow: auto;
     margin-top: 1em;
 }
 
@@ -131,7 +131,7 @@ a.listing-link:hover {
 .content-ctn p {
     max-height: 220px;
     width: 100%;
-    overflow: scroll;
+    overflow: auto;
     word-break: break-word;
 }
 
@@ -172,7 +172,7 @@ a.listing-link:hover {
     .content-ctn p {
         max-height: 50vh;
         width: 100%;
-        overflow: scroll;
+        overflow: auto;
     }
 
     .comment-margin {
