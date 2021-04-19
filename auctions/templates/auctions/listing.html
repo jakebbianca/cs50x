@@ -22,6 +22,7 @@
         </div>
         <div class="flex-grid-1st flex-grid-bid-form ml-3">
             <h3>Current price for this listing is <span class="bid-text">${{ listing.price }}</span>.</h3>
+            <p>Listed by {{ listing.seller }}.</p>
             <span>{{ bid_count }} bid(s) so far. {% if is_leader is True %} <span class="leader-text">You are the current bid leader.</span>{% endif %}</span>
             <form action="{% url 'listings' listing.id %}" method="POST">
                 {% csrf_token %}
