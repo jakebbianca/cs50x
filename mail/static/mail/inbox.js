@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
     document.querySelector('#compose').addEventListener('click', compose_email);
 
-    // Use submit button to send email and prevent normal submission to Django
-    document.querySelector('#compose-form').onsubmit = function() {
+    // Use submit button to send email, load sent mailbox, and prevent full form submission to Django server
+    document.querySelector('#compose-form').onsubmit = () => {
         send_email();
         load_mailbox('sent');
         return false;
@@ -37,6 +37,23 @@ function load_mailbox(mailbox) {
 
     // Show the mailbox name
     document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+    // Show emails within certain mailbox, starting with most recent
+    fetch(`/emails/${mailbox}`)
+    .then(response => response.json())
+    .then(emails => {
+        // Print emails
+        emails.forEach(email => {
+            const element = document.createElement('div');
+            element.innerHTML = `Message from ${email.sender} with subject ${email.subject}.`
+            element.addEventListener('click', () => {
+                load_email(email);
+                console.log('Specific email has been clicked.');
+            })
+            document.querySelector('#emails-view').append(element);
+        })
+        console.log(emails);
+    });
 }
 
 /* Send Mail: When a user submits the email composition form, add JavaScript code to actually send the email.
@@ -52,40 +69,27 @@ function validate_email(emailAddress) {
     return re.test(emailAddress);
 }
 
-
 function send_email() {
 
-    // Get list of recipient email addresses, remove all white space, and split on commas per Project 3 spec
-    var recipientsInput = document.querySelector('#compose-recipients').value.replace(/\s+/g, '');
-    var recipients = recipientsInput.split(',');
-
-    // client-side email validation check
-    var message = "";
-    var recipientsAreValid = false;
-    recipients.forEach(recipient => {
-        if (!validate_email(recipient)) {
-            message += "'" + recipient + "' is NOT a valid email address.\n"
-        }
-    });
-
-    // If any recipient emails are invalid, warn the user
-    // Otherwise, attempt to send the email
-    if (message) {
-        message += "Please confirm that all email addresses are valid before sending.";
-        alert(message);
-    } else {
-        fetch('/emails', {
-            method: 'POST',
-            body: JSON.stringify({
-                recipients: recipients,
-                subject: document.querySelector('#compose-subject').value,
-                body: document.querySelector('#compose-body').value
-            })
+    fetch('/emails', {
+        method: 'POST',
+        body: JSON.stringify({
+            recipients: document.querySelector('#compose-recipients').value,
+            subject: document.querySelector('#compose-subject').value,
+            body: document.querySelector('#compose-body').value
         })
-        .then(response => response.json())
-        .then(result => {
-            // Print result
-            console.log(result)
-        });
-    }
+    })
+    .then(response => response.json())
+    .then(result => {
+        // Print result
+        console.log(result)
+    })
+    .catch(error => {
+        console.log('Error:', error);
+        alert(error);
+    });
+}
+
+function load_email(email) {
+    return;
 }
