@@ -22,6 +22,7 @@ function compose_email() {
     // Show compose view and hide other views
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'block';
+    document.querySelector('#email-view').style.display = 'none';
 
     // Clear out composition fields
     document.querySelector('#compose-recipients').value = '';
@@ -34,6 +35,7 @@ function load_mailbox(mailbox) {
     // Show the mailbox and hide other views
     document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
+    document.querySelector('#email-view').style.display = 'none';
 
     // Show the mailbox name
     document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -63,9 +65,7 @@ function load_mailbox(mailbox) {
             }; 
 
             // Append to created div container
-            emailsContainer.append(emailsSender);
-            emailsContainer.append(emailsSubject);
-            emailsContainer.append(emailsTimestamp);
+            emailsContainer.append(emailsSender, emailsSubject, emailsTimestamp);
 
             // Append created div container within outer #emails-view div
             document.querySelector('#emails-view').append(emailsContainer);
@@ -115,5 +115,41 @@ function send_email() {
 }
 
 function load_email(email) {
-    return;
+
+    // Show the email and hide other views
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'none';
+    document.querySelector('#email-view').style.display = 'block';
+
+    // REPLY BUTTON *TODO*
+
+    fetch(`/emails/${email.id}`)
+    .then(response => response.json())
+    .then(email => {
+
+        // Create HTML elements to display email
+        var emailHeader = document.createElement('div');
+        var emailSender = document.createElement('p');
+        var emailRecipients = document.createElement('p');
+        var emailSubject = document.createElement('p');
+        var emailsTimestamp = document.createElement('p');
+        var emailBodyContainer = document.createElement('div');
+        var emailBody = document.createElement('p');
+
+        // Insert email information HTML into new elements
+        emailSender.innerHTML = `<b>From:</b> ${email.sender}`;
+        emailRecipients.innerHTML = `<b>To:</b> ${email.recipients}`;
+        emailSubject.innerHTML = `<b>Subject:</b> ${email.subject}`;
+        emailsTimestamp.innerHTML = `<b>Timestamp:</b> ${email.timestamp}`;
+        emailBody.innerHTML = `<hr>\n${email.body}`;
+
+        // Append email information within container elements
+        emailHeader.append(emailSender, emailRecipients, emailSubject, emailsTimestamp);
+        emailBodyContainer.append(emailBody);
+        document.querySelector('#email-view').append(emailHeader, emailBodyContainer);
+
+        // TODO -- MARK AS READ
+
+    });
+
 }
