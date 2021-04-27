@@ -42,15 +42,25 @@ function load_mailbox(mailbox) {
     fetch(`/emails/${mailbox}`)
     .then(response => response.json())
     .then(emails => {
-        // Print emails
+        // sort emails
+        emails.sort()
         emails.forEach(email => {
-            const element = document.createElement('div');
-            element.innerHTML = `Message from ${email.sender} with subject ${email.subject}.`
-            element.addEventListener('click', () => {
+            // Initialize html elements for each email in the mailbox
+            var emailsContainer = document.createElement('div');
+            var emailsSender = document.createElement('h4');
+            var emailsSubject = document.createElement('p');
+
+            // Update the innerHTML for each inner element and append them to the newly created div
+            emailsSender.innerHTML = `${email.sender}`;
+            emailsSubject.innerHTML = `${email.subject}`;
+            emailsContainer.append(emailsSender)
+            emailsContainer.append(emailsSubject)
+
+            emailsContainer.addEventListener('click', () => {
                 load_email(email);
                 console.log('Specific email has been clicked.');
             })
-            document.querySelector('#emails-view').append(element);
+            document.querySelector('#emails-view').append(emailsContainer);
         })
         console.log(emails);
     });
