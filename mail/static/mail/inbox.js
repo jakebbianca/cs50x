@@ -38,30 +38,38 @@ function load_mailbox(mailbox) {
     // Show the mailbox name
     document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
-    // Show emails within certain mailbox, starting with most recent
+    // Show emails within certain mailbox
     fetch(`/emails/${mailbox}`)
     .then(response => response.json())
     .then(emails => {
-        // sort emails
-        emails.sort()
+
         emails.forEach(email => {
+
             // Initialize html elements for each email in the mailbox
             var emailsContainer = document.createElement('div');
             var emailsSender = document.createElement('h4');
             var emailsSubject = document.createElement('p');
+            var emailsTimestamp = document.createElement('p');
 
-            // Update the innerHTML for each inner element and append them to the newly created div
+            // Update innerHTML of elements to include relevant email information
             emailsSender.innerHTML = `${email.sender}`;
             emailsSubject.innerHTML = `${email.subject}`;
-            emailsContainer.append(emailsSender)
-            emailsContainer.append(emailsSubject)
+            emailsTimestamp.innerHTML = `${email.timestamp}`;
 
+            // Append to created div container
+            emailsContainer.append(emailsSender);
+            emailsContainer.append(emailsSubject);
+            emailsContainer.append(emailsTimestamp);
+
+            // Append created div container within outer #emails-view div
+            document.querySelector('#emails-view').append(emailsContainer);
+
+            // Load view of specific email on click
             emailsContainer.addEventListener('click', () => {
                 load_email(email);
                 console.log('Specific email has been clicked.');
-            })
-            document.querySelector('#emails-view').append(emailsContainer);
-        })
+            });
+        });
         console.log(emails);
     });
 }
