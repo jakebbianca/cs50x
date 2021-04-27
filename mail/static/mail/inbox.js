@@ -103,8 +103,7 @@ function send_email() {
             body: document.querySelector('#compose-body').value
         })
     })
-    // .then(response => response.json())
-    .then(response => response.text())
+    .then(response => response.json())
     .then(result => {
         // Print result
         console.log(result)
