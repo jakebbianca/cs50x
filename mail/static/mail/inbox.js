@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Use submit button to send email, load sent mailbox, and prevent full form submission to Django server
     document.querySelector('#compose-form').onsubmit = () => {
         send_email();
-        load_mailbox('sent');
+        setTimeout(() => {load_mailbox('sent'); }, 100);
         return false;
     }
 
@@ -56,6 +56,12 @@ function load_mailbox(mailbox) {
             emailsSubject.innerHTML = `${email.subject}`;
             emailsTimestamp.innerHTML = `${email.timestamp}`;
 
+            // Update style and classes of new elements
+            emailsContainer.style.border = '1px solid black';
+            if (email.read === true) {
+                emailsContainer.style.backgroundColor = 'lightgrey';
+            }; 
+
             // Append to created div container
             emailsContainer.append(emailsSender);
             emailsContainer.append(emailsSubject);
@@ -97,7 +103,8 @@ function send_email() {
             body: document.querySelector('#compose-body').value
         })
     })
-    .then(response => response.json())
+    // .then(response => response.json())
+    .then(response => response.text())
     .then(result => {
         // Print result
         console.log(result)
