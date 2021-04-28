@@ -116,13 +116,13 @@ function send_email() {
 
 function load_email(email, mailbox) {
 
+    // Remove any pre-existing email information that was added to HTML
+    document.querySelector('#email-view').innerHTML = '';
+
     // Show the email and hide other views
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'none';
     document.querySelector('#email-view').style.display = 'block';
-
-    // TODO NOT WORKING -- Remove any pre-existing email information that was added to HTML
-    document.querySelector('#emails-view').innerHTML = '';
 
     // Make API call to get info for specific email
     fetch(`/emails/${email.id}`)
