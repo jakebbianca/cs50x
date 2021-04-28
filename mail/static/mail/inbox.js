@@ -1,20 +1,25 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Initialize reply variable as false, since clicking compose button will be used for new email
-    let reply = false;
-
     // Use buttons to toggle between views
     document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
     document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
     document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-    document.querySelector('#compose').addEventListener('click', compose_email(reply));
+    document.querySelector('#compose').addEventListener('click', () => compose_email(false));
 
     // Use submit button to send email, load sent mailbox, and prevent full form submission to Django server
     document.querySelector('#compose-form').onsubmit = () => {
-        send_email();
-        setTimeout(() => {load_mailbox('sent'); }, 100);
+        // send email
+        // if successful, load sent mailbox
+        // otherwise, send_email function will send alert message and maintain compose view with filled form data
+        if (send_email() == true) {
+            setTimeout(() => {load_mailbox('sent'); }, 100);
+        }
+        // return false to prevent Django form submission
         return false;
     }
+
+    // Hide alert message div by default
+    document.querySelector('#alert').style.display = 'none';
 
     // By default, load the inbox
     load_mailbox('inbox');
@@ -89,33 +94,92 @@ function load_mailbox(mailbox) {
     });
 }
 
-
-function validate_email(emailAddress) {
-    // Define regex for email format and test input
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(emailAddress);
+// Function to validate email addresses on client side
+// regex for approximate RFC2822 validation found at https://regexr.com/2rhq7
+function validateEmail(emailAddress) {
+    const re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    return re.test(String(emailAddress).toLowerCase());
 }
 
 function send_email() {
 
-    // Send email by POST API request
-    fetch('/emails', {
-        method: 'POST',
-        body: JSON.stringify({
-            recipients: document.querySelector('#compose-recipients').value,
-            subject: document.querySelector('#compose-subject').value,
-            body: document.querySelector('#compose-body').value
-        })
-    })
-    .then(response => response.json())
-    .then(result => {
-        // Print result
-        console.log(result)
-    })
-    .catch(error => {
-        console.log('Error:', error);
-        alert(error);
-    });
+    var recipients = document.querySelector('#compose-recipients').value;
+    var subject = document.querySelector('#compose-subject').value;
+    var body = document.querySelector('#compose-body').value;
+    var success = false;
+
+    // Validate recipients
+    if (recipients !== '') {
+
+        // Get email addresses separated by commas in case multiple recipients are entered
+        let recipientsSplit = recipients.split(',');
+
+        // Check each recipient email address for validity
+        var recipientsAreValid = true;
+
+        recipientsSplit.forEach(recipient => {
+            if (!validateEmail(recipient)) {
+                recipientsAreValid = false;
+                return;
+            }
+        });
+
+        // if all recipients are valid, send the email
+        if (recipientsAreValid) {
+            fetch('/emails', {
+                method: 'POST',
+                body: JSON.stringify({
+                    recipients: recipients,
+                    subject: subject,
+                    body: body
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                // Print result
+                console.log(result);
+                if (result['error']) {
+                    // if there is any error even after validation, send alert message to user
+                    alertMessage = document.querySelector('#alert');
+                    alertMessage.innerHTML = 'Please ensure that all provided recipient email addresses are valid, separated by commas.';
+                    alertMessage.style.display = 'block';
+                    alertMessage.setAttribute('class', 'alert alert-danger');
+                    compose_email(true, recipients, subject, body);
+                } else {
+                    // if POST is successful, hide the alert message and confirm with success variable
+                    alertMessage = document.querySelector('#alert');
+                    alertMessage.innerHTML = 'Email was sent successfully.';
+                    alertMessage.style.display = 'block';
+                    alertMessage.setAttribute('class', 'alert alert-success');
+                    success = true;
+                }
+            })
+            .catch(error => {
+                console.log('Error:', error);
+                alertMessage = document.querySelector('#alert');
+                alertMessage.innerHTML = `${error}`;
+                alertMessage.style.display = 'block';
+                alertMessage.setAttribute('class', 'alert alert-danger');
+                compose_email(true, recipients, subject, body);
+            });
+        } else {
+            // if any recipient is invalid, send alert message to user
+            alertMessage = document.querySelector('#alert');
+            alertMessage.innerHTML = 'Please ensure that all provided recipient email addresses are valid, separated by commas.';
+            alertMessage.style.display = 'block';
+            alertMessage.setAttribute('class', 'alert alert-danger');
+            compose_email(true, recipients, subject, body);
+        }
+    } else {
+        // If no input in recipients field, send alert message to user
+        alertMessage = document.querySelector('#alert');
+        alertMessage.style.display = 'block';
+        alertMessage.setAttribute('class', 'alert alert-danger');
+        compose_email(true, recipients, subject, body);
+    }
+
+    // return true if POST is successful, false otherwise
+    return success;
 }
 
 function load_email(email, mailbox) {
@@ -165,11 +229,11 @@ function load_email(email, mailbox) {
         replyButton.addEventListener('click', () => {
             let reply = true;
             var subject = email.subject;
-            if (email.subject.substring(0,3) !== 'RE:') {
+            if (subject.substring(0,3) !== 'RE:') {
                 subject = `RE: ${subject}`;
             }
             let body = `\n\nOn ${email.timestamp} ${email.sender} wrote:\n\t${email.body}`;
-            compose_email(reply, email.sender, subject, body)
+            compose_email(reply, email.sender, subject, body);
         });
 
         // Append email information within container elements
@@ -188,9 +252,8 @@ function load_email(email, mailbox) {
                 archiveButton.innerHTML = 'Move to Archive';
                 let archivedUpdate = true;
                 load_archive_button(email, archiveButton, archivedUpdate);
-            }
-            // if mailbox === 'archive'
-            else {
+            } else {
+                // if mailbox === 'archive'
                 archiveButton.innerHTML = 'Remove from Archive';
                 let archivedUpdate = false;
                 load_archive_button(email, archiveButton, archivedUpdate);
