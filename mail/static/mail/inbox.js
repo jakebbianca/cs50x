@@ -8,10 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Use submit button to send email, load sent mailbox, and prevent full form submission to Django server
     document.querySelector('#compose-form').onsubmit = () => {
-        // send email
-        // if successful, load sent mailbox
-        // otherwise, send_email function will send alert message and maintain compose view with filled form data
-        if (send_email()) {
+        // attempt to send email; on success, bring user to sent mailbox, otherwise send_email will send alert and keep user on compose view
+        // this only works with strict equivalence in the if condition, loose equivalence still runs code within if statement
+        if (send_email() === true) {
             setTimeout(() => {load_mailbox('sent'); }, 100);
         }
         // return false to prevent Django form submission
@@ -154,37 +153,32 @@ async function send_email() {
                     // if there is any error even after validation, send alert message to user
                     compose_email(true, recipients, subject, body);
                     alertMessage.innerHTML = 'Please ensure that all provided recipient email addresses are valid, separated by commas.';
-                    alertMessage.style.display = 'block';
                     alertMessage.setAttribute('class', 'alert alert-danger mt-3');
+                    alertMessage.style.display = 'block';
                     return success;
                 } else {
                     // if POST is successful, hide the alert message and confirm with success variable
                     alertMessage.innerHTML = 'Email was sent successfully.';
-                    alertMessage.style.display = 'block';
                     alertMessage.setAttribute('class', 'alert alert-success mt-3');
+                    alertMessage.style.display = 'block';
                     success = true;
                 }
-
             }
-
         } else {
             // if any recipient is invalid, send alert message to user
             compose_email(true, recipients, subject, body);
             alertMessage.innerHTML = 'Please ensure that all provided recipient email addresses are valid, separated by commas.';
-            alertMessage.style.display = 'block';
             alertMessage.setAttribute('class', 'alert alert-danger mt-3');
+            alertMessage.style.display = 'block';
         }
-
     } else {
         // If no input in recipients field, send alert message to user
         compose_email(true, recipients, subject, body);
         alertMessage.innerHTML = 'Please enter at least one valid email address.'
-        alertMessage.style.display = 'block';
         alertMessage.setAttribute('class', 'alert alert-danger mt-3');
+        alertMessage.style.display = 'block';
     }
-
     return success;
-    
 }
 
 function load_email(email, mailbox) {
