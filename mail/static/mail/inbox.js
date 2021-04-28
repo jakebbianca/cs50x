@@ -155,26 +155,31 @@ function load_email(email, mailbox) {
 
         // Create archive button if email is in inbox and append to header
         // If clicked, archive the email and load fresh inbox
-        if (mailbox === 'inbox') {
+        if (!mailbox === 'sent') {
             let archiveButton = document.createElement('button');
-            archiveButton.innerHTML = 'Archive this email'
-            archiveButton.addEventListener('click', () => {
-                fetch(`/emails/${email.id}`, {
-                    method: 'PUT',
-                    body: JSON.stringify({
-                        archived: true
-                    })
-                })
-                load_mailbox('inbox');
-            });
+            if (mailbox === 'inbox') {
+                archiveButton.innerHTML = 'Move to Archive';
+                let archivedUpdate = true;
+                load_archive_button(archiveButton, archivedUpdate);
+            }
+            // if mailbox === 'archive'
+            else {
+                archiveButton.innerHTML = 'Remove from Archive';
+                let archivedUpdate = false;
+                load_archive_button(archiveButton, archivedUpdate);
+            }
+
             emailHeader.append(archiveButton);
+
         }
+
+        
 
         // Append created divs to email-view container
         document.querySelector('#email-view').append(emailHeader, emailBodyContainer);
 
         // Mark email as read when opening for the first time
-        if (email.read === false) {
+        if (!email.read) {
             fetch(`/emails/${email.id}`, {
                 method: 'PUT',
                 body: JSON.stringify({
@@ -183,6 +188,21 @@ function load_email(email, mailbox) {
             });
         }
 
+    });
+
+}
+
+function load_archive_button(archiveButton, archivedUpdate) {
+
+    // Make PUT request to API to update archive status on click
+    archiveButton.addEventListener('click', () => {
+        fetch(`/emails/${email.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                archived: `${archivedUpdate}`
+            })
+        })
+        setTimeout(() => {load_mailbox('inbox'); }, 100);
     });
 
 }
