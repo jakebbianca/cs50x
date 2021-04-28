@@ -155,18 +155,18 @@ function load_email(email, mailbox) {
 
         // Create archive button if email is in inbox and append to header
         // If clicked, archive the email and load fresh inbox
-        if (!mailbox === 'sent') {
+        if (mailbox !== 'sent') {
             let archiveButton = document.createElement('button');
             if (mailbox === 'inbox') {
                 archiveButton.innerHTML = 'Move to Archive';
                 let archivedUpdate = true;
-                load_archive_button(archiveButton, archivedUpdate);
+                load_archive_button(email, archiveButton, archivedUpdate);
             }
             // if mailbox === 'archive'
             else {
                 archiveButton.innerHTML = 'Remove from Archive';
                 let archivedUpdate = false;
-                load_archive_button(archiveButton, archivedUpdate);
+                load_archive_button(email, archiveButton, archivedUpdate);
             }
 
             emailHeader.append(archiveButton);
@@ -192,14 +192,14 @@ function load_email(email, mailbox) {
 
 }
 
-function load_archive_button(archiveButton, archivedUpdate) {
+function load_archive_button(email, archiveButton, archivedUpdate) {
 
     // Make PUT request to API to update archive status on click
     archiveButton.addEventListener('click', () => {
         fetch(`/emails/${email.id}`, {
             method: 'PUT',
             body: JSON.stringify({
-                archived: `${archivedUpdate}`
+                archived: archivedUpdate
             })
         })
         setTimeout(() => {load_mailbox('inbox'); }, 100);
