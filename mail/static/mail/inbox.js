@@ -48,10 +48,10 @@ function load_mailbox(mailbox) {
         emails.forEach(email => {
 
             // Initialize html elements for each email in the mailbox
-            var emailsContainer = document.createElement('div');
-            var emailsSender = document.createElement('h4');
-            var emailsSubject = document.createElement('p');
-            var emailsTimestamp = document.createElement('p');
+            let emailsContainer = document.createElement('div');
+            let emailsSender = document.createElement('h4');
+            let emailsSubject = document.createElement('p');
+            let emailsTimestamp = document.createElement('p');
 
             // Update innerHTML of elements to include relevant email information
             emailsSender.innerHTML = `${email.sender}`;
@@ -72,7 +72,7 @@ function load_mailbox(mailbox) {
 
             // Load view of specific email on click
             emailsContainer.addEventListener('click', () => {
-                load_email(email);
+                load_email(email, mailbox);
                 console.log('Specific email has been clicked.');
             });
         });
@@ -114,27 +114,29 @@ function send_email() {
     });
 }
 
-function load_email(email) {
+function load_email(email, mailbox) {
 
     // Show the email and hide other views
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'none';
     document.querySelector('#email-view').style.display = 'block';
 
-    // REPLY BUTTON *TODO*
+    // TODO NOT WORKING -- Remove any pre-existing email information that was added to HTML
+    document.querySelector('#emails-view').innerHTML = '';
 
+    // Make API call to get info for specific email
     fetch(`/emails/${email.id}`)
     .then(response => response.json())
     .then(email => {
 
         // Create HTML elements to display email
-        var emailHeader = document.createElement('div');
-        var emailSender = document.createElement('p');
-        var emailRecipients = document.createElement('p');
-        var emailSubject = document.createElement('p');
-        var emailsTimestamp = document.createElement('p');
-        var emailBodyContainer = document.createElement('div');
-        var emailBody = document.createElement('p');
+        let emailHeader = document.createElement('div');
+        let emailSender = document.createElement('p');
+        let emailRecipients = document.createElement('p');
+        let emailSubject = document.createElement('p');
+        let emailsTimestamp = document.createElement('p');
+        let emailBodyContainer = document.createElement('div');
+        let emailBody = document.createElement('p');
 
         // Insert email information HTML into new elements
         emailSender.innerHTML = `<b>From:</b> ${email.sender}`;
@@ -146,9 +148,40 @@ function load_email(email) {
         // Append email information within container elements
         emailHeader.append(emailSender, emailRecipients, emailSubject, emailsTimestamp);
         emailBodyContainer.append(emailBody);
+
+        // Give container elements ids, will be useful to remove later before loading new email
+        emailHeader.setAttribute('id', 'email-header')
+        emailBodyContainer.setAttribute('id', 'email-body-ctn')
+
+        // Create archive button if email is in inbox and append to header
+        // If clicked, archive the email and load fresh inbox
+        if (mailbox === 'inbox') {
+            let archiveButton = document.createElement('button');
+            archiveButton.innerHTML = 'Archive this email'
+            archiveButton.addEventListener('click', () => {
+                fetch(`/emails/${email.id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        archived: true
+                    })
+                })
+                load_mailbox('inbox');
+            });
+            emailHeader.append(archiveButton);
+        }
+
+        // Append created divs to email-view container
         document.querySelector('#email-view').append(emailHeader, emailBodyContainer);
 
-        // TODO -- MARK AS READ
+        // Mark email as read when opening for the first time
+        if (email.read === false) {
+            fetch(`/emails/${email.id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    read: true
+                })
+            });
+        }
 
     });
 
