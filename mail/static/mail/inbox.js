@@ -1,10 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+    // Initialize reply variable as false, since clicking compose button will be used for new email
+    let reply = false;
+
     // Use buttons to toggle between views
     document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
     document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
     document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-    document.querySelector('#compose').addEventListener('click', compose_email);
+    document.querySelector('#compose').addEventListener('click', compose_email(reply));
 
     // Use submit button to send email, load sent mailbox, and prevent full form submission to Django server
     document.querySelector('#compose-form').onsubmit = () => {
@@ -17,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     load_mailbox('inbox');
 });
 
-function compose_email() {
+function compose_email(reply, recipients, subject, body) {
 
     // Show compose view and hide other views
     document.querySelector('#emails-view').style.display = 'none';
@@ -28,6 +31,12 @@ function compose_email() {
     document.querySelector('#compose-recipients').value = '';
     document.querySelector('#compose-subject').value = '';
     document.querySelector('#compose-body').value = '';
+
+    if (reply) {
+        document.querySelector('#compose-recipients').value = `${recipients}`;
+        document.querySelector('#compose-subject').value = `${subject}`;
+        document.querySelector('#compose-body').value = `${body}`;
+    }
 }
 
 function load_mailbox(mailbox) {
@@ -80,12 +89,6 @@ function load_mailbox(mailbox) {
     });
 }
 
-/* Send Mail: When a user submits the email composition form, add JavaScript code to actually send the email.
-You’ll likely want to make a POST request to /emails, passing in values for recipients, subject, and body.
-Once the email has been sent, load the user’s sent mailbox. */
-
-// Create function that will send the email and then load the user's sent mailbox.
-// Add event listener to 'send' button on 'compose' view
 
 function validate_email(emailAddress) {
     // Define regex for email format and test input
@@ -95,6 +98,7 @@ function validate_email(emailAddress) {
 
 function send_email() {
 
+    // Send email by POST API request
     fetch('/emails', {
         method: 'POST',
         body: JSON.stringify({
@@ -129,6 +133,16 @@ function load_email(email, mailbox) {
     .then(response => response.json())
     .then(email => {
 
+        // Mark email as read when opening for the first time
+        if (!email.read) {
+            fetch(`/emails/${email.id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    read: true
+                })
+            });
+        }
+
         // Create HTML elements to display email
         let emailHeader = document.createElement('div');
         let emailSender = document.createElement('p');
@@ -137,23 +151,36 @@ function load_email(email, mailbox) {
         let emailsTimestamp = document.createElement('p');
         let emailBodyContainer = document.createElement('div');
         let emailBody = document.createElement('p');
+        let replyButton = document.createElement('button');
 
-        // Insert email information HTML into new elements
+        // Insert email information/HTML into new elements
         emailSender.innerHTML = `<b>From:</b> ${email.sender}`;
         emailRecipients.innerHTML = `<b>To:</b> ${email.recipients}`;
         emailSubject.innerHTML = `<b>Subject:</b> ${email.subject}`;
         emailsTimestamp.innerHTML = `<b>Timestamp:</b> ${email.timestamp}`;
         emailBody.innerHTML = `<hr>\n${email.body}`;
+        replyButton.innerHTML = 'Reply';
+
+        // When user clicks reply button, show them the compose view and fill in fields appropriately
+        replyButton.addEventListener('click', () => {
+            let reply = true;
+            var subject = email.subject;
+            if (email.subject.substring(0,3) !== 'RE:') {
+                subject = `RE: ${subject}`;
+            }
+            let body = `\n\nOn ${email.timestamp} ${email.sender} wrote:\n\t${email.body}`;
+            compose_email(reply, email.sender, subject, body)
+        });
 
         // Append email information within container elements
-        emailHeader.append(emailSender, emailRecipients, emailSubject, emailsTimestamp);
+        emailHeader.append(emailSender, emailRecipients, emailSubject, emailsTimestamp, replyButton);
         emailBodyContainer.append(emailBody);
 
         // Give container elements ids, will be useful to remove later before loading new email
         emailHeader.setAttribute('id', 'email-header')
         emailBodyContainer.setAttribute('id', 'email-body-ctn')
 
-        // Create archive button if email is in inbox and append to header
+        // Create archive or unarchive button if email is in inbox or archive respectively
         // If clicked, archive the email and load fresh inbox
         if (mailbox !== 'sent') {
             let archiveButton = document.createElement('button');
@@ -169,24 +196,12 @@ function load_email(email, mailbox) {
                 load_archive_button(email, archiveButton, archivedUpdate);
             }
 
+            // Append archive/unarchive button to email header
             emailHeader.append(archiveButton);
-
         }
-
-        
 
         // Append created divs to email-view container
         document.querySelector('#email-view').append(emailHeader, emailBodyContainer);
-
-        // Mark email as read when opening for the first time
-        if (!email.read) {
-            fetch(`/emails/${email.id}`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    read: true
-                })
-            });
-        }
 
     });
 
