@@ -7,10 +7,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#compose').addEventListener('click', () => compose_email(false));
 
     // Use submit button to send email, load sent mailbox, and prevent full form submission to Django server
-    document.querySelector('#compose-form').onsubmit = () => {
+    document.querySelector('#compose-form').onsubmit = async () => {
         // attempt to send email; on success, bring user to sent mailbox, otherwise send_email will send alert and keep user on compose view
         // this only works with strict equivalence in the if condition, loose equivalence still runs code within if statement
-        if (send_email() === true) {
+        const success = await send_email();
+        if (success === true) {
             setTimeout(() => {load_mailbox('sent'); }, 100);
         }
         // return false to prevent Django form submission
