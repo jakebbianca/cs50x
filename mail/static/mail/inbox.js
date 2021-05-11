@@ -81,6 +81,7 @@ function load_mailbox(mailbox) {
 
             // Update style and classes of new elements
             emailsContainer.style.border = '1px solid black';
+            emailsContainer.style.marginBottom = '1px';
             if (email.read === true) {
                 emailsContainer.style.backgroundColor = 'lightgrey';
             }; 
