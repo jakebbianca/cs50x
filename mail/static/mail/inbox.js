@@ -190,7 +190,7 @@ function load_email(email, mailbox) {
     document.querySelector('#email-view').innerHTML = '';
 
     // Show the email and hide other views
-    document.querySelectorAll('#emails-view, #compose-view').forEach(element => {
+    document.querySelectorAll('#emails-view, #compose-view, #message').forEach(element => {
         element.style.display = 'none';
     })
     document.querySelector('#email-view').style.display = 'block';
@@ -225,7 +225,7 @@ function load_email(email, mailbox) {
         emailRecipients.innerHTML = `<b>To:</b> ${email.recipients}`;
         emailSubject.innerHTML = `<b>Subject:</b> ${email.subject}`;
         emailsTimestamp.innerHTML = `<b>Timestamp:</b> ${email.timestamp}`;
-        emailBody.innerHTML = `<hr>\n${email.body}`;
+        emailBody.innerHTML = `<hr><pre>${email.body}`;
         replyButton.innerHTML = 'Reply';
 
         // When user clicks reply button, show them the compose view and fill in fields appropriately
@@ -235,7 +235,7 @@ function load_email(email, mailbox) {
             if (subject.substring(0,3) !== 'RE:') {
                 subject = `RE: ${subject}`;
             }
-            let body = `\n\nOn ${email.timestamp} ${email.sender} wrote:\n\t${email.body}`;
+            let body = `\n\n\tOn ${email.timestamp} ${email.sender} wrote:\n\t${email.body}`;
             compose_email(reply, email.sender, subject, body);
         });
 

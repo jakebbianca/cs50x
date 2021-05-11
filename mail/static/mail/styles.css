@@ -5,3 +5,9 @@ textarea {
 form div, form textarea {
     margin-bottom: 1rem!important;
 }
+
+pre {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
