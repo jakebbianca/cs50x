@@ -29,10 +29,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function compose_email(reply, recipients, subject, body) {
 
     // Show compose view and hide other views
-    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelectorAll('#emails-view, #email-view, #message').forEach(element => {
+        element.style.display = 'none';
+    })
     document.querySelector('#compose-view').style.display = 'block';
-    document.querySelector('#email-view').style.display = 'none';
-    document.querySelector('#message').style.display = 'none';
 
     // Clear out composition fields
     document.querySelector('#compose-recipients').value = '';
@@ -50,8 +50,9 @@ function load_mailbox(mailbox) {
 
     // Show the mailbox and hide other views
     document.querySelector('#emails-view').style.display = 'block';
-    document.querySelector('#compose-view').style.display = 'none';
-    document.querySelector('#email-view').style.display = 'none';
+    document.querySelectorAll('#compose-view, #email-view').forEach(element => {
+        element.style.display = 'none';
+    })
 
     if (mailbox !== 'sent') {
         document.querySelector('#message').style.display = 'none';
@@ -189,8 +190,9 @@ function load_email(email, mailbox) {
     document.querySelector('#email-view').innerHTML = '';
 
     // Show the email and hide other views
-    document.querySelector('#emails-view').style.display = 'none';
-    document.querySelector('#compose-view').style.display = 'none';
+    document.querySelectorAll('#emails-view, #compose-view').forEach(element => {
+        element.style.display = 'none';
+    })
     document.querySelector('#email-view').style.display = 'block';
 
     // Make API call to get info for specific email
