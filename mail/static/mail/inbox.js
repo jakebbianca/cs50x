@@ -66,39 +66,52 @@ function load_mailbox(mailbox) {
     .then(response => response.json())
     .then(emails => {
 
-        emails.forEach(email => {
+        if (emails.length === 0) {
+            console.log(emails);
+            let noEmailsContainer = document.createElement('div');
+            let noEmailsMessage = document.createElement('h4');
 
-            // Initialize html elements for each email in the mailbox
-            let emailsContainer = document.createElement('div');
-            let emailsSender = document.createElement('h4');
-            let emailsSubject = document.createElement('p');
-            let emailsTimestamp = document.createElement('p');
+            noEmailsMessage.innerHTML = "No messages found."
 
-            // Update innerHTML of elements to include relevant email information
-            emailsSender.innerHTML = `${email.sender}`;
-            emailsSubject.innerHTML = `${email.subject}`;
-            emailsTimestamp.innerHTML = `${email.timestamp}`;
+            noEmailsContainer.append(noEmailsMessage);
 
-            // Update style and classes of new elements
-            emailsContainer.style.border = '1px solid black';
-            emailsContainer.style.marginBottom = '1px';
-            if (email.read === true) {
-                emailsContainer.style.backgroundColor = 'lightgrey';
-            }; 
+            document.querySelector('#emails-view').append(noEmailsContainer);
 
-            // Append to created div container
-            emailsContainer.append(emailsSender, emailsSubject, emailsTimestamp);
+        } else {
 
-            // Append created div container within outer #emails-view div
-            document.querySelector('#emails-view').append(emailsContainer);
+            emails.forEach(email => {
 
-            // Load view of specific email on click
-            emailsContainer.addEventListener('click', () => {
-                load_email(email, mailbox);
-                console.log('Specific email has been clicked.');
+                // Initialize html elements for each email in the mailbox
+                let emailsContainer = document.createElement('div');
+                let emailsSender = document.createElement('h4');
+                let emailsSubject = document.createElement('p');
+                let emailsTimestamp = document.createElement('p');
+
+                // Update innerHTML of elements to include relevant email information
+                emailsSender.innerHTML = `${email.sender}`;
+                emailsSubject.innerHTML = `${email.subject}`;
+                emailsTimestamp.innerHTML = `${email.timestamp}`;
+
+                // Update style and classes of new elements
+                emailsContainer.style.border = '1px solid black';
+                emailsContainer.style.marginBottom = '1px';
+                if (email.read === true) {
+                    emailsContainer.style.backgroundColor = 'lightgrey';
+                }; 
+
+                // Append to created div container
+                emailsContainer.append(emailsSender, emailsSubject, emailsTimestamp);
+
+                // Append created div container within outer #emails-view div
+                document.querySelector('#emails-view').append(emailsContainer);
+
+                // Load view of specific email on click
+                emailsContainer.addEventListener('click', () => {
+                    load_email(email, mailbox);
+                    console.log('Specific email has been clicked.');
+                });
             });
-        });
-        console.log(emails);
+        };
     });
 }
 
