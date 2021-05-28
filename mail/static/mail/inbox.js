@@ -249,7 +249,7 @@ function load_email(email, mailbox) {
             if (subject.substring(0,3) !== 'RE:') {
                 subject = `RE: ${subject}`;
             }
-            let body = `\n\n\tOn ${email.timestamp} ${email.sender} wrote:\n\t${email.body}`;
+            let body = `\n\n\nOn ${email.timestamp} ${email.sender} wrote:\n${email.body}`;
             compose_email(reply, email.sender, subject, body);
         });
 
