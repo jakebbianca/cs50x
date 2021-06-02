@@ -7,6 +7,7 @@ from django.urls import reverse
 from .models import User
 
 
+# this will show ALL POSTS and New Post Form
 def index(request):
     return render(request, "network/index.html")
 
@@ -61,7 +62,3 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
-
-
-def new(request):
-    pass
