@@ -1,16 +1,95 @@
+import json
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.http import JsonResponse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
-from .models import User
+from .models import User, Post, Follows, Likes
 
 
 # this will show ALL POSTS and New Post Form
 def index(request):
-    return render(request, "network/index.html")
 
+    # authenticated users may view the index
+    if request.user.is_authenticated:
+            return render(request, "network/index.html")
+
+    # everyone else required to log in
+    else:
+        return HttpResponseRedirect(reverse("login"))
+
+
+@csrf_exempt
+@login_required
+def new(request):
+
+    # Creating a new post must be via POST method
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    # save data sent via fetch call to a variable
+    data = json.loads(request.body)
+
+    # store new post content in a variable
+    content = data.get("content")
+    # content must not be empty or only whitespace
+    if not content or content.isspace():
+        return JsonResponse({
+            "error": "A new post must contain some content and must include at least one non-whitespace character."}, 
+            status=400)
+
+    #create and save a new Post object given the submitting user and the content of the post
+    post = Post(
+        poster=request.user,
+        content=content
+    )
+    post.save()
+
+    #return successful response once post is saved
+    return JsonResponse({"message": "Post submitted successfully"}, status=201)
+
+
+@csrf_exempt
+@login_required
+def post(request, post_id):
+    
+    # Editing or liking a post must be via PUT method
+    if request.method != "PUT":
+        return JsonResponse({"error": "PUT request required."}, status=400)
+
+    # confirm that post exists and store in variable if so, otherwise return error
+    try:
+        post = Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found."}, status=400)
+
+    # more TODO
+
+
+def posts(request):
+
+    data = json.loads(request.body)
+
+    # if a poster (user) is supplied via fetch call, get posts the specified user has posted
+    # if a poster is not supplied, get all posts from all users
+    try:
+        poster = data.poster
+    except AttributeError:
+        posts = Post.objects.all()
+    finally:
+        posts = Post.objects.filter(poster=poster)
+
+    # order the posts in reverse-chronological order
+    posts = posts.order_by("-post_datetime").all()
+    return JsonResponse([post for post in posts], status=200)
+    
+
+    
+    
 
 def login_view(request):
     if request.method == "POST":

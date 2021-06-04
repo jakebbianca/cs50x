@@ -1,11 +1,22 @@
-@media only screen and (max-width: 600px) {
-
-    h1 {
-        padding-left: center;
-    }
-
+.body {
+    margin: 0 2rem 0 2rem;
 }
 
 h1 {
     text-align: center;
+}
+
+#new-post-form-ctn {
+    padding: 2rem;
+    border: 2px solid lightgrey;
+    border-radius: 10px;
+}
+
+#submit-new-post {
+    margin-top: 1rem;
+}
+
+@media only screen and (min-width: 600px) {
+
+
 }

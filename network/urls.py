@@ -7,5 +7,12 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
-    path("register", views.register, name="register")
+    path("register", views.register, name="register"),
+
+    # API Routes
+    path("posts", views.new, name="compose"),
+    path("posts/<int:post_id>", views.post, name="post"),
+    # this one is meant to show either all posts or posts from a given user or set of users, may need to change
+    path("posts/$", views.posts, name="posts"),
+    path("posts/<str:user_id>", views.posts, name="posts")
 ]
