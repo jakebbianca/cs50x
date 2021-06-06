@@ -70,18 +70,17 @@ def post(request, post_id):
     # more TODO
 
 
-def posts(request):
+def posts(request, poster=None):
 
-    data = json.loads(request.body)
+    if request.method != "GET":
+        return JsonResponse({"error": "GET request required."}, status=400)
 
-    # if a poster (user) is supplied via fetch call, get posts the specified user has posted
-    # if a poster is not supplied, get all posts from all users
-    try:
-        poster = data.poster
-    except AttributeError:
-        posts = Post.objects.all()
-    finally:
+    # if a poster is specified, load only that user's posts
+    # if a poster is not specified, load all posts from all users
+    if poster:
         posts = Post.objects.filter(poster=poster)
+    else:
+        posts = Post.objects.all()
 
     # order the posts in reverse-chronological order
     posts = posts.order_by("-post_datetime").all()

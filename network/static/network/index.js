@@ -19,14 +19,72 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
-
     // get all posts
-    
+    get_posts()
 
     // On submit of new post form, send info to server
     document.querySelector('#new-post-form').onsubmit = async (e) => {
 
+        // prevent Django form submission
         e.preventDefault();
         // submitNewPost()
     }    
 });
+
+
+function get_posts(poster='') {
+
+    fetch(`/posts/${poster}`)
+    .then(response => {
+        console.log(response);
+    });
+    /* .then(posts => {
+
+        // if there are no posts, display a message to confirm that
+        // if there are posts, display each in its own container
+        if (posts.length === 0) {
+
+            let message = document.createElement('h4');
+            message.innerHTML = "There are no posts available.";
+
+            let container = document.querySelector('.posts-ctn');
+            container.append(message);
+        
+        } else {
+
+            posts.forEach(post => {
+
+                // Create html elements for each post
+                let postContainer = document.createElement('div');
+                let postPoster = document.createElement('h3');
+                let postContent = document.createElement('p');
+                let postDatetime = document.createElement('h3');
+                // let postLikes = document.createElement('h3');
+
+                // Append inner elements to container
+                container.append(postContainer);
+                postContainer.append(postPoster, postContent, postDatetime);
+
+                // Fill in elements with data from fetch call and append to container div
+                postPoster.innerHTML = `${post.poster}`;
+                postContent = `${post.content}`;
+                // postLikes = probably fetch call, may want to change Post model so that likes counter is held there too
+
+                // check if post has been edited and update html elements to show if yes
+                if (post.edit_bool == true) {
+                    let postEditDatetime = document.createElement('h3');
+                    postEditDatetime = `Updated on ${post.edit_datetime}`;
+                    postDatetime = `Originally posted on ${post.post_datetime}`;
+                    postContainer.append(postDatetime, postEditDateimte);
+                } else {
+                    postDatetime = `Posted on ${post.post_datetime}`;
+                    postContainer.append(postDatetime);
+                }
+                
+            });
+
+        }
+   
+    }); */
+
+}
