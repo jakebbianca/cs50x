@@ -77,14 +77,14 @@ def posts(request, poster=None):
 
     # if a poster is specified, load only that user's posts
     # if a poster is not specified, load all posts from all users
-    if poster:
+    if not poster:
         posts = Post.objects.filter(poster=poster)
     else:
         posts = Post.objects.all()
 
     # order the posts in reverse-chronological order
     posts = posts.order_by("-post_datetime").all()
-    return JsonResponse([post for post in posts], status=200)
+    return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
     
 
     

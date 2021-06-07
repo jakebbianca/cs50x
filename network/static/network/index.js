@@ -32,13 +32,23 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function get_posts(poster='') {
+function get_posts(poster=null) {
 
-    fetch(`/posts/${poster}`)
-    .then(response => {
-        console.log(response);
-    });
-    /* .then(posts => {
+    var url = undefined
+
+    // if no poster is specified, load all posts
+    if (poster === null) {
+        url = 'posts/'
+    } else {
+        url = `posts/${poster}`
+    }
+
+    fetch(url)
+    .then(response => response.json())
+    .catch(error => console.error('Error:', error))
+    .then(posts => {
+
+        console.log(posts)
 
         // if there are no posts, display a message to confirm that
         // if there are posts, display each in its own container
@@ -67,17 +77,17 @@ function get_posts(poster='') {
 
                 // Fill in elements with data from fetch call and append to container div
                 postPoster.innerHTML = `${post.poster}`;
-                postContent = `${post.content}`;
+                postContent.innerHTML = `${post.content}`;
                 // postLikes = probably fetch call, may want to change Post model so that likes counter is held there too
 
                 // check if post has been edited and update html elements to show if yes
                 if (post.edit_bool == true) {
                     let postEditDatetime = document.createElement('h3');
-                    postEditDatetime = `Updated on ${post.edit_datetime}`;
-                    postDatetime = `Originally posted on ${post.post_datetime}`;
+                    postEditDatetime.innerHTML = `Updated on ${post.edit_datetime}`;
+                    postDatetime.innerHTML = `Originally posted on ${post.post_datetime}`;
                     postContainer.append(postDatetime, postEditDateimte);
                 } else {
-                    postDatetime = `Posted on ${post.post_datetime}`;
+                    postDatetime.innerHTML = `Posted on ${post.post_datetime}`;
                     postContainer.append(postDatetime);
                 }
                 
@@ -85,6 +95,5 @@ function get_posts(poster='') {
 
         }
    
-    }); */
-
+    });
 }

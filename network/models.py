@@ -24,6 +24,16 @@ class Post(models.Model):
             # if post was edited one or more times, display updated content with datetime of most recent edit
             return f"{self.poster} updated post to say:\n'{self.content}'\nat {self.edit_datetime}"
 
+    def serialize (self):
+        return {
+            "post": self.id,
+            "poster": self.poster.id,
+            "content": self.content,
+            "post_datetime": self.post_datetime.strftime("%b %d %Y, %I:%M %p"),
+            "edit_bool": self.edit_bool,
+            "edit_datetime": self.edit_datetime.strftime("%b %d %Y, %I:%M %p")
+        }
+
     def is_valid_post(self):
         return len(self.content) > 0 and len(self.content) <= 280
 
