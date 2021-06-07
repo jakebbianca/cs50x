@@ -1,12 +1,8 @@
 // What this file needs to do...
 
-// At the top of the page, load a form to submit a new post
-// If submitted, make a fetch POST call to submit the post to the server
-
 // Display all posts from all users in reverse chronological order
 // Display 10 posts at a time, paginated (per spec, would rather try infinite scroll)
 // Post must show username of poster, post content, date and time of post, edit date if applicable, and number of likes
-// Maybe? refresh posts when user submits a new post
 // Maybe? add a refresh button that can be clicked at any time by the user -- not sure if this is redundant with browser reset button
 // Clicking a username should redirect to a user's profile page -- I will do this on the back end
 
@@ -20,19 +16,27 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // get all posts
-    get_posts()
+    getPosts()
 
     // On submit of new post form, send info to server
     document.querySelector('#new-post-form').onsubmit = async (e) => {
 
-        // prevent Django form submission
+        // prevent default form submit
         e.preventDefault();
-        // submitNewPost()
+        // submit new post and refresh posts after completion
+        await makePost();
+        getPosts()
+        // prevent Django form submission and page refresh
+        return false;
     }    
 });
 
 
-function get_posts(poster=null) {
+function getPosts(poster=null) {
+
+    // get container embedded in template to display posts and clear any existing inner content ahead of loading posts
+    let container = document.querySelector('.posts-ctn');
+    container.innerHTML = '';
 
     // initialize url variable to later use in fetch call to load posts
     var url = undefined
@@ -50,9 +54,6 @@ function get_posts(poster=null) {
     .then(response => response.json())
     .then(posts => {
 
-        // get container embedded in template to display posts
-        let container = document.querySelector('.posts-ctn');
-
         // if there are no posts, display a message to that end
         if (posts.length === 0) {
 
@@ -69,6 +70,7 @@ function get_posts(poster=null) {
                 // Create the elements for each post
                 let postContainer = document.createElement('div');
                 let subtitleContainer = document.createElement('div');
+                let postPosterLink = document.createElement('a');
                 let postPoster = document.createElement('span');
                 let postDatetime = document.createElement('span');                
                 let postContent = document.createElement('p');
@@ -104,4 +106,28 @@ function get_posts(poster=null) {
             });
         }
     });
+}
+
+async function makePost() {
+
+    // store content from new post form
+    let content = document.querySelector('#new-post-content').value;
+
+    const response = await fetch('new', {
+        method: 'POST',
+        body: JSON.stringify({
+            content: content
+        })
+    });
+
+    // if response is not ok, throw error, else, log the result
+    if (!response.ok) {
+        const message = `Error: ${response.status}`;
+        throw new Error(message);
+    } else {
+        const result = await response.json();
+        console.log(result);
+        return;
+    }
+
 }
