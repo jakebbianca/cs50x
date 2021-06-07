@@ -37,7 +37,6 @@ function getPosts(poster=null) {
                 let postContainer = document.createElement('div');
                 let subtitleContainer = document.createElement('div');
                 let postPosterLink = document.createElement('a');
-                let postPoster = document.createElement('span');
                 let postDatetime = document.createElement('span');                
                 let postContent = document.createElement('p');
                 // let postLikes = document.createElement('h3');
@@ -45,22 +44,27 @@ function getPosts(poster=null) {
                 // Append inner elements to container
                 container.append(postContainer);
                 postContainer.append(subtitleContainer, postContent);
-                postPosterLink.append(postPoster);
                 subtitleContainer.append(postPosterLink, postDatetime);
 
                 // Fill in elements with data from fetch call and append to container div
-                postPoster.innerHTML = `${post.poster_username}`;
+                postPosterLink.innerHTML = `${post.poster_username}`;
                 postDatetime.innerHTML = `\tPosted ${post.post_datetime}`;
                 postContent.innerHTML = `${post.content}`;
                 // postLikes = probably fetch call, may want to change Post model so that likes counter is held there too
 
                 // Add core attributes -- classes, ids, etc.
                 postContainer.setAttribute('class', 'post-ctn');
-                postPoster.setAttribute('class', 'poster-name');
+                postPosterLink.setAttribute('class', 'poster-name');
                 postDatetime.setAttribute('class', 'post-datetime')
 
                 // Add link which redirects to user's profile page
-                // postPosterLink.setAttribute('href', '{% %}')
+                // Update using AJAX so that the link is usable
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = () => {
+                    postPosterLink.setAttribute('href', `/profile/${post.poster_id}`);
+                }
+                xhttp.open("GET", "network/posts.html", true);
+                xhttp.send()
 
 
                 // Handle case if post was edited

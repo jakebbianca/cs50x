@@ -22,7 +22,8 @@ h4 {
     word-wrap: break-word;
 }
 
-.poster-name {
+.poster-name, .poster-name:visited, .poster-name:active, .poster-name:hover {
+    color: rgb(33, 37, 41);
     font-weight: bold;
 }
 

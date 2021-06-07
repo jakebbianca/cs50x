@@ -26,10 +26,7 @@ def index(request):
 @login_required
 def profile(request, user_id):
 
-    # get the user who's profile page will be loaded
-    user = User.objects.get(pk=user_id)
-
-    return render(request, "profile.html")
+    return render(request, "network/profile.html")
 
 
 @csrf_exempt
