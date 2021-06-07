@@ -38,26 +38,25 @@ function get_posts(poster=null) {
 
     // if no poster is specified, load all posts
     if (poster === null) {
-        url = 'posts/'
+        url = 'posts'
     } else {
         url = `posts/${poster}`
     }
 
     fetch(url)
     .then(response => response.json())
-    .catch(error => console.error('Error:', error))
     .then(posts => {
 
         console.log(posts)
-
         // if there are no posts, display a message to confirm that
         // if there are posts, display each in its own container
+        let container = document.querySelector('.posts-ctn');
+        
         if (posts.length === 0) {
 
             let message = document.createElement('h4');
             message.innerHTML = "There are no posts available.";
 
-            let container = document.querySelector('.posts-ctn');
             container.append(message);
         
         } else {

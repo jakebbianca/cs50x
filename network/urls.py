@@ -10,9 +10,9 @@ urlpatterns = [
     path("register", views.register, name="register"),
 
     # API Routes
-    path("posts", views.new, name="compose"),
-    path("posts/<int:post_id>", views.post, name="post"),
+    path("new", views.new, name="new"),
+    path("post/<int:post_id>", views.post, name="post"),
     # this one is meant to show either all posts or posts from a given user or set of users, may need to change
-    path("posts/", views.posts, name="posts"),
+    path("posts", views.posts, name="posts"),
     path("posts/<int:user_id>", views.posts, name="posts")
 ]

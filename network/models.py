@@ -29,9 +29,9 @@ class Post(models.Model):
             "post": self.id,
             "poster": self.poster.id,
             "content": self.content,
-            "post_datetime": self.post_datetime.strftime("%b %d %Y, %I:%M %p"),
+            "post_datetime": self.post_datetime,
             "edit_bool": self.edit_bool,
-            "edit_datetime": self.edit_datetime.strftime("%b %d %Y, %I:%M %p")
+            "edit_datetime": self.edit_datetime
         }
 
     def is_valid_post(self):

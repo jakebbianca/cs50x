@@ -77,7 +77,7 @@ def posts(request, poster=None):
 
     # if a poster is specified, load only that user's posts
     # if a poster is not specified, load all posts from all users
-    if not poster:
+    if poster is not None:
         posts = Post.objects.filter(poster=poster)
     else:
         posts = Post.objects.all()
