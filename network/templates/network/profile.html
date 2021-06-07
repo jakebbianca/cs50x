@@ -1,0 +1,18 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h1 id="profile-username"></h1>
+    <div id="profile-data">
+        <div id="followers"></div>
+        <div id="following"></div>
+    </div>
+    <div id="profile-posts-ctn" class="posts-ctn">
+        
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/getposts.js' %}"></script>
+    <script src="{% static 'network/profile.js' %}"></script>
+{% endblock %}

@@ -23,6 +23,15 @@ def index(request):
         return HttpResponseRedirect(reverse("login"))
 
 
+@login_required
+def profile(request, user_id):
+
+    # get the user who's profile page will be loaded
+    user = User.objects.get(pk=user_id)
+
+    return render(request, "profile.html")
+
+
 @csrf_exempt
 @login_required
 def new(request):
@@ -85,9 +94,15 @@ def posts(request, poster=None):
     # order the posts in reverse-chronological order
     posts = posts.order_by("-post_datetime").all()
     return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
-    
 
-    
+
+def users(request, user_id):
+
+    if request.method != "GET":
+        return JsonResponse({"error": "GET request required."}, status=400)
+
+    user = User.objects.get(pk=user_id)
+    return JsonResponse(user, status=200)
     
 
 def login_view(request):

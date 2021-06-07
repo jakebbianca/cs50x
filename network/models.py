@@ -24,7 +24,7 @@ class Post(models.Model):
             # if post was edited one or more times, display updated content with datetime of most recent edit
             return f"{self.poster} updated post to say:\n'{self.content}'\nat {self.edit_datetime}"
 
-    def serialize (self):
+    def serialize(self):
         if self.edit_datetime is not None:
             self.edit_datetime = self.edit_datetime.strftime("%b %d %Y, %I:%M %p")
 
