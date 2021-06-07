@@ -34,24 +34,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function get_posts(poster=null) {
 
+    // initialize url variable to later use in fetch call to load posts
     var url = undefined
 
-    // if no poster is specified, load all posts
+    // if no poster is specified, specify API url for all posts
+    // if poster is specified, specify API url for only that user's posts
     if (poster === null) {
         url = 'posts'
     } else {
         url = `posts/${poster}`
     }
 
+    // make GET call to load posts
     fetch(url)
     .then(response => response.json())
     .then(posts => {
 
-        console.log(posts)
-        // if there are no posts, display a message to confirm that
-        // if there are posts, display each in its own container
+        // get container embedded in template to display posts
         let container = document.querySelector('.posts-ctn');
-        
+
+        // if there are no posts, display a message to that end
         if (posts.length === 0) {
 
             let message = document.createElement('h4');
@@ -61,38 +63,45 @@ function get_posts(poster=null) {
         
         } else {
 
+            // create elements and styling for each post being fetched
             posts.forEach(post => {
 
-                // Create html elements for each post
+                // Create the elements for each post
                 let postContainer = document.createElement('div');
-                let postPoster = document.createElement('h3');
+                let subtitleContainer = document.createElement('div');
+                let postPoster = document.createElement('span');
+                let postDatetime = document.createElement('span');                
                 let postContent = document.createElement('p');
-                let postDatetime = document.createElement('h3');
                 // let postLikes = document.createElement('h3');
 
                 // Append inner elements to container
                 container.append(postContainer);
-                postContainer.append(postPoster, postContent, postDatetime);
+                postContainer.append(subtitleContainer, postContent);
+                subtitleContainer.append(postPoster, postDatetime);
 
                 // Fill in elements with data from fetch call and append to container div
-                postPoster.innerHTML = `${post.poster}`;
+                postPoster.innerHTML = `${post.poster_username}`;
+                postDatetime.innerHTML = `\tPosted ${post.post_datetime}`;
                 postContent.innerHTML = `${post.content}`;
                 // postLikes = probably fetch call, may want to change Post model so that likes counter is held there too
 
-                // check if post has been edited and update html elements to show if yes
-                if (post.edit_bool == true) {
-                    let postEditDatetime = document.createElement('h3');
-                    postEditDatetime.innerHTML = `Updated on ${post.edit_datetime}`;
-                    postDatetime.innerHTML = `Originally posted on ${post.post_datetime}`;
-                    postContainer.append(postDatetime, postEditDateimte);
-                } else {
-                    postDatetime.innerHTML = `Posted on ${post.post_datetime}`;
-                    postContainer.append(postDatetime);
-                }
-                
-            });
+                // Add classes, ids, etc.
+                postContainer.setAttribute('class', 'post-ctn');
+                postPoster.setAttribute('class', 'poster-name');
+                postDatetime.setAttribute('class', 'post-datetime')
 
+                // Handle case if post was edited
+                if (post.edit_bool == true) {
+
+                    // create element, fill in with timestamp, append to subtitle, set attributes, etc.
+                    postEditDatetime = document.createElement('span')
+                    postEditDatetime.innerHTML = ` and updated ${post.edit_datetime}`
+                    subtitleContainer.append(postEditDatetime);
+                    postEditDatetime.setAttribute('class', 'post-datetime')
+
+                }
+
+            });
         }
-   
     });
 }

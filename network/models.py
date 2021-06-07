@@ -25,11 +25,15 @@ class Post(models.Model):
             return f"{self.poster} updated post to say:\n'{self.content}'\nat {self.edit_datetime}"
 
     def serialize (self):
+        if self.edit_datetime is not None:
+            self.edit_datetime = self.edit_datetime.strftime("%b %d %Y, %I:%M %p")
+
         return {
             "post": self.id,
-            "poster": self.poster.id,
+            "poster_id": self.poster.id,
+            "poster_username": self.poster.username,
             "content": self.content,
-            "post_datetime": self.post_datetime,
+            "post_datetime": self.post_datetime.strftime("%b %d %Y, %I:%M %p"),
             "edit_bool": self.edit_bool,
             "edit_datetime": self.edit_datetime
         }

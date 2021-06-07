@@ -31,7 +31,7 @@ def new(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
-    # save data sent via fetch call to a variable
+    # store data sent via fetch call to a variable
     data = json.loads(request.body)
 
     # store new post content in a variable

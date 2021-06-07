@@ -1,7 +1,3 @@
-.body {
-    margin: 0 2rem 0 2rem;
-}
-
 h1 {
     text-align: center;
 }
@@ -11,10 +7,32 @@ h4 {
     margin-top: 1rem;
 }
 
+.body {
+    margin: 0 2rem 0 2rem;
+}
+
+.posts-ctn {
+    border: 1px solid lightgrey;
+}
+
+.post-ctn {
+    border: 1px solid lightgrey;
+    min-height: 150px;
+    padding: 1rem;
+    word-wrap: break-word;
+}
+
+.poster-name {
+    font-weight: bold;
+}
+
+.post-datetime {
+    color:rgb(91, 112, 131);
+}
+
 #new-post-form-ctn {
-    padding: 2rem;
+    padding: 1rem;
     border: 2px solid lightgrey;
-    border-radius: 10px;
 }
 
 #submit-new-post {
