@@ -92,16 +92,6 @@ def posts(request, poster=None):
     posts = posts.order_by("-post_datetime").all()
     return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
 
-
-def users(request, user_id):
-
-    if request.method != "GET":
-        return JsonResponse({"error": "GET request required."}, status=400)
-
-    user = User.objects.get(pk=user_id)
-    return JsonResponse(user.serialize(), safe=False, status=200)
-    
-
 def login_view(request):
     if request.method == "POST":
 

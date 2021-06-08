@@ -58,11 +58,14 @@ function getPosts(poster=null) {
                 postDatetime.setAttribute('class', 'post-datetime')
 
                 // Add link which redirects to user's profile page
-                fetch(`users/${post.poster_id}`)
+                postPosterLink.setAttribute('href', `${post.poster_url}`)
+
+
+                /* fetch(`users/${post.poster_id}`)
                 .then(response => response.json())
                 .then(user => {
                     postPosterLink.setAttribute('href', `${user.user_url}`);
-                });
+                }); */
 
                 // Handle case if post was edited
                 if (post.edit_bool == true) {

@@ -37,7 +37,8 @@ async function makePost() {
     } else {
         const result = await response.json();
         console.log(result);
-        return;
     }
+
+    content.value = ''
 
 }

@@ -6,13 +6,7 @@ from django.urls import reverse
 
 
 class User(AbstractUser):
-
-    def serialize(self):
-        return {
-        "user_id": self.id,
-        "user_username": self.username,
-        "user_url": reverse('profile', kwargs={'user_id': self.id})
-        }
+    pass
 
 class Post(models.Model):
     poster = models.ForeignKey(User, on_delete=models.CASCADE, 
@@ -41,7 +35,8 @@ class Post(models.Model):
             "content": self.content,
             "post_datetime": self.post_datetime.strftime("%b %d %Y, %I:%M %p"),
             "edit_bool": self.edit_bool,
-            "edit_datetime": self.edit_datetime
+            "edit_datetime": self.edit_datetime,
+            "poster_url": reverse('profile', kwargs={'user_id': self.id})
         }
 
     def is_valid_post(self):
