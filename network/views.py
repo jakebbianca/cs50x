@@ -29,6 +29,16 @@ def profile(request, user_id):
     return render(request, "network/profile.html", {"user_id": user_id})
 
 
+def user(request, user_id):
+
+    if request.method != "GET":
+        return JsonResponse({"error": "GET request required."}, status=400)
+
+    user = User.objects.get(pk=user_id)
+
+    return JsonResponse(user.serialize(), safe=False, status=200)
+
+
 @csrf_exempt
 @login_required
 def new(request):

@@ -6,7 +6,14 @@ from django.urls import reverse
 
 
 class User(AbstractUser):
-    pass
+    
+    def serialize(self):
+        return {
+            "user_id": self.id,
+            "username": self.username,
+            "followers": Follows.objects.filter(following=self, active_bool=True).count(),
+            "following": Follows.objects.filter(follower=self, active_bool=True).count()
+        }
 
 class Post(models.Model):
     poster = models.ForeignKey(User, on_delete=models.CASCADE, 
@@ -25,6 +32,7 @@ class Post(models.Model):
             return f"{self.poster} updated post to say:\n'{self.content}'\nat {self.edit_datetime}"
 
     def serialize(self):
+        
         if self.edit_datetime is not None:
             self.edit_datetime = self.edit_datetime.strftime("%b %d %Y, %I:%M %p")
 
@@ -36,7 +44,8 @@ class Post(models.Model):
             "post_datetime": self.post_datetime.strftime("%b %d %Y, %I:%M %p"),
             "edit_bool": self.edit_bool,
             "edit_datetime": self.edit_datetime,
-            "poster_url": reverse('profile', kwargs={'user_id': self.poster.id})
+            "poster_url": reverse('profile', kwargs={'user_id': self.poster.id}),
+            "likes": Likes.objects.filter(post=self, active_bool=True).count()
         }
 
     def is_valid_post(self):
@@ -56,3 +65,4 @@ class Likes(models.Model):
         related_name="liker")
     post = models.ForeignKey(Post, on_delete=models.CASCADE,
         related_name="liked_post")
+    active_bool = models.BooleanField(default=True)
