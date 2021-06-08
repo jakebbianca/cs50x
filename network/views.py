@@ -99,7 +99,7 @@ def users(request, user_id):
         return JsonResponse({"error": "GET request required."}, status=400)
 
     user = User.objects.get(pk=user_id)
-    return JsonResponse(user, status=200)
+    return JsonResponse(user.serialize(), safe=False, status=200)
     
 
 def login_view(request):

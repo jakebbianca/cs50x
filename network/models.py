@@ -2,11 +2,17 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.utils import timezone
+from django.urls import reverse
 
 
 class User(AbstractUser):
-    pass
 
+    def serialize(self):
+        return {
+        "user_id": self.id,
+        "user_username": self.username,
+        "user_url": reverse('profile', kwargs={'user_id': self.id})
+        }
 
 class Post(models.Model):
     poster = models.ForeignKey(User, on_delete=models.CASCADE, 
