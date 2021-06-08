@@ -1,4 +1,4 @@
-function getPosts(poster=null) {
+function getPosts(posterID=null) {
 
     // get container embedded in template to display posts and clear any existing inner content ahead of loading posts
     let container = document.querySelector('.posts-ctn');
@@ -9,10 +9,10 @@ function getPosts(poster=null) {
 
     // if no poster is specified, specify API url for all posts
     // if poster is specified, specify API url for only that user's posts
-    if (poster === null) {
+    if (posterID === null) {
         url = 'posts'
     } else {
-        url = `posts/${poster}`
+        url = `posts/${posterID}`
     }
 
     // make GET call to load posts
@@ -59,13 +59,6 @@ function getPosts(poster=null) {
 
                 // Add link which redirects to user's profile page
                 postPosterLink.setAttribute('href', `${post.poster_url}`)
-
-
-                /* fetch(`users/${post.poster_id}`)
-                .then(response => response.json())
-                .then(user => {
-                    postPosterLink.setAttribute('href', `${user.user_url}`);
-                }); */
 
                 // Handle case if post was edited
                 if (post.edit_bool == true) {

@@ -4,4 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let followers = document.querySelector('#followers');
     let following = document.querySelector('#following');
 
+    getPosts(id);
+
 })

@@ -36,7 +36,7 @@ class Post(models.Model):
             "post_datetime": self.post_datetime.strftime("%b %d %Y, %I:%M %p"),
             "edit_bool": self.edit_bool,
             "edit_datetime": self.edit_datetime,
-            "poster_url": reverse('profile', kwargs={'user_id': self.id})
+            "poster_url": reverse('profile', kwargs={'user_id': self.poster.id})
         }
 
     def is_valid_post(self):
