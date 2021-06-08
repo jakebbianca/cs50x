@@ -21,7 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
 async function makePost() {
 
     // store content from new post form
-    let content = document.querySelector('#new-post-content').value;
+    let contentElement = document.querySelector('#new-post-content')
+    let content = contentElement.value;
 
     const response = await fetch('new', {
         method: 'POST',
@@ -39,6 +40,6 @@ async function makePost() {
         console.log(result);
     }
 
-    content.value = ''
+    contentElement.value = ''
 
 }

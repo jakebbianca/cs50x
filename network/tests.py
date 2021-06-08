@@ -59,6 +59,11 @@ class PostTestCase(TestCase):
     # client tests
     def test_index(self):
         """Test that index page loads correctly"""
+        # load client
         c = Client()
-        response = c.get("/")
+        # provide data for login info
+        data = {'username': 'u0', 'password': 'u0'}
+        # make get call to index path providing login info -- login is required to prevent redirect per index view
+        response = c.get("", data=data, secure=True, follow=True)
+        # status should be 200
         self.assertEqual(response.status_code, 200)
