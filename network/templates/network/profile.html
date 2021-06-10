@@ -3,10 +3,19 @@
 
 {% block body %}
     <h1 id="profile-username"></h1>
-    <div id="profile-data">
-        <div id="followers"></div>
-        <div id="following"></div>
+    <div id="profile-follow-data">
+        <span id="profile-follow-bar">
+            <div id="followers-ctn" class="badge bg-light text-dark">
+                <div id="followers-head">Followers</div>
+                <div id="followers"></div>
+            </div>
+            <div id="following-ctn" class="badge bg-light text-dark">
+                <div id="following-head">Following</div>
+                <div id="following"></div>
+            </div>
+        </span>
     </div>
+    <hr>
     <div id="profile-posts-ctn" class="posts-ctn">
         
     </div>
@@ -14,7 +23,8 @@
 
 {% block script %}
     <script>
-        var id = "{{ user_id }}";    
+        var profile_id = "{{ profile_id }}";
+        var user_id = "{{ user_id }}";
     </script>
     <script src="{% static 'network/getposts.js' %}"></script>
     <script src="{% static 'network/getuser.js' %}"></script>

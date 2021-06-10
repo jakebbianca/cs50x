@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let followers = document.querySelector('#followers');
     let following = document.querySelector('#following');
 
-    getUser(id, username, followers, following); 
+    getUser(profile_id, username, followers, following);
 
-    getPosts(id);
+    getPosts(profile_id);
 
 })

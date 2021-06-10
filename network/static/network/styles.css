@@ -36,6 +36,18 @@ h4 {
     border: 2px solid lightgrey;
 }
 
+#profile-follow-data {
+    text-align: center;
+}
+
+#followers-ctn, #following-ctn {
+    border: 2px solid lightgrey;
+}
+
+#followers, #following, #followers-head, #following-head {
+    font-size: 20px;
+}
+
 #submit-new-post {
     margin-top: 1rem;
 }

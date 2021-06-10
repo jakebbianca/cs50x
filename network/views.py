@@ -24,9 +24,12 @@ def index(request):
 
 
 @login_required
-def profile(request, user_id):
+def profile(request, profile_id):
 
-    return render(request, "network/profile.html", {"user_id": user_id})
+    user_id = request.user
+
+    return render(request, "network/profile.html", {
+        "profile_id": profile_id, "user_id": user_id})
 
 
 def user(request, user_id):
