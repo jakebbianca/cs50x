@@ -1,0 +1,12 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h1 id="following-header">Following</h1>
+    <div id="following-posts-ctn" class="posts-ctn">
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/getposts.js' %}"></script>
+{% endblock %}

@@ -42,6 +42,25 @@ def user(request, user_id):
     return JsonResponse(user.serialize(), safe=False, status=200)
 
 
+@login_required
+def following(request):
+
+    return render(request, "network/following.html")
+
+
+def following_API(request, other_user_id=None):
+
+    if other_user_id is not None:
+        other_user = User.objects.get(pk=other_user_id)
+        user_follows = Follows.objects.filter(user=other_user, active_bool=True)
+    else:
+        user_follows = Follows.objects.filter(user=request.user, active_bool=True)
+
+    return JsonResponse(user_follows.serialize(), safe=False, status=200)
+
+
+    
+
 @csrf_exempt
 @login_required
 def new(request):
@@ -89,7 +108,7 @@ def post(request, post_id):
     # more TODO
 
 
-def posts(request, poster_id=None):
+def posts(request, poster_id=None, posters_ids=None):
 
     if request.method != "GET":
         return JsonResponse({"error": "GET request required."}, status=400)
@@ -100,12 +119,16 @@ def posts(request, poster_id=None):
         # get specific page of posts
         poster = User.objects.get(pk=poster_id)
         posts = Post.objects.filter(poster=poster)
+    elif posters_ids is not None:
+        posters = User.objects.filter(pk=posters_ids)
+        posts = Post.objects.filter(poster__in=[posters])
     else:
         posts = Post.objects.all()
 
     # order the posts in reverse-chronological order
     posts = posts.order_by("-post_datetime").all()
     return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
+
 
 def login_view(request):
     if request.method == "POST":

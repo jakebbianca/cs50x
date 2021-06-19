@@ -59,6 +59,13 @@ class Follows(models.Model):
         related_name="following")
     active_bool = models.BooleanField(default=True)
 
+    def serialize(self):
+
+        return {
+            "follower": self.follower.id,
+            "following": self.following.id,
+        }
+
 
 class Likes(models.Model):
     liker = models.ForeignKey(User, on_delete=models.CASCADE,
