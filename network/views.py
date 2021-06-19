@@ -97,6 +97,7 @@ def posts(request, poster_id=None):
     # if a poster is specified, load only that user's posts
     # if a poster is not specified, load all posts from all users
     if poster_id is not None:
+        # get specific page of posts
         poster = User.objects.get(pk=poster_id)
         posts = Post.objects.filter(poster=poster)
     else:
