@@ -1,4 +1,5 @@
 from django.test import Client, TestCase
+from django.urls import reverse
 from .models import User, Post
 
 #test cases
@@ -66,4 +67,12 @@ class PostTestCase(TestCase):
         # make get call to index path providing login info -- login is required to prevent redirect per index view
         response = c.get("", data=data, secure=True, follow=True)
         # status should be 200
+        self.assertEqual(response.status_code, 200)
+
+    def test_profile(self):
+        """Test that user profile page loads correctly"""
+        c = Client()
+        data = {'username': 'u0', 'password': 'u0'}
+        url = reverse('profile', args={0})
+        response = c.get(url, data=data, secure=True, follow=True)
         self.assertEqual(response.status_code, 200)
