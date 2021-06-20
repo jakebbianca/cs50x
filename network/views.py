@@ -45,9 +45,25 @@ def user(request, user_id):
 @login_required
 def following(request):
 
-    return render(request, "network/following.html")
+    # retrieve Follows objects for all cases where current user is an active follower
+    followed_qs = Follows.objects.filter(
+        follower=request.user,
+        active_bool=True
+    )
+
+    # create a list of ids of users followed by the current user
+    users_followed = []
+    
+    for item in followed_qs:
+        users_followed.append(item.following.id)
+
+    if len(users_followed) == 0:
+        users_followed = None
+
+    return render(request, "network/following.html", {"users_followed": users_followed})
 
 
+# under construction
 def following_API(request, other_user_id=None):
 
     if other_user_id is not None:
@@ -108,24 +124,34 @@ def post(request, post_id):
     # more TODO
 
 
-def posts(request, poster_id=None, posters_ids=None):
+@csrf_exempt
+def posts(request, poster_id=None):
 
-    if request.method != "GET":
-        return JsonResponse({"error": "GET request required."}, status=400)
+    if request.method == "GET":
+        # if a single poster is specified, load only that user's posts
+        # if a single poster is not specified, load all posts from all users
+        if poster_id is not None:
+            # get specific page of posts
+            poster = User.objects.get(pk=poster_id)
+            posts = Post.objects.filter(poster=poster)
+        else:
+            posts = Post.objects.all()
 
-    # if a poster is specified, load only that user's posts
-    # if a poster is not specified, load all posts from all users
-    if poster_id is not None:
-        # get specific page of posts
-        poster = User.objects.get(pk=poster_id)
-        posts = Post.objects.filter(poster=poster)
-    elif posters_ids is not None:
-        posters = User.objects.filter(pk=posters_ids)
-        posts = Post.objects.filter(poster__in=[posters])
+    elif request.method == "POST":
+        data = json.loads(request.body)
+        try:
+            posters_ids = data.get("posters_ids")
+            posters = User.objects.filter(pk__in=[posters_ids])
+            posts = Post.objects.filter(poster__in=[posters])
+        except:
+            return JsonResponse([], safe=False, status=200)
+            
+
+    # if not GET or POST, return error message
     else:
-        posts = Post.objects.all()
+        return JsonResponse({"error": "GET or POST request required."}, status=400)
 
-    # order the posts in reverse-chronological order
+    # finally, order the posts in reverse-chronological order and send data back
     posts = posts.order_by("-post_datetime").all()
     return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
 

@@ -1,3 +1,2 @@
-// need to make call to fetch all users that current user is following
-// will use this to get posts from these users
-
+// retrieve posts from all users followed by the current user using context list
+getPosts(posterID=null, posters_ids)
