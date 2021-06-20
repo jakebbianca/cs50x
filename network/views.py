@@ -138,6 +138,9 @@ def posts(request, poster_id=None):
             posts = Post.objects.all()
 
     elif request.method == "POST":
+        # load ids from JSON data body
+        # if there is an exception when trying to get the ids or retreive querysets...
+        #... return an empty JSON response
         data = json.loads(request.body)
         try:
             posters_ids = data.get("posters_ids")
