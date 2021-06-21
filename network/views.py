@@ -138,16 +138,43 @@ def posts(request, poster_id=None):
             posts = Post.objects.all()
 
     elif request.method == "POST":
+
         # load ids from JSON data body
-        # if there is an exception when trying to get the ids or retreive querysets...
-        #... return an empty JSON response
         data = json.loads(request.body)
+        
+        # get poster ids from POST data, return error if failed
         try:
             posters_ids = data.get("posters_ids")
-            posters = User.objects.filter(pk__in=[posters_ids])
-            posts = Post.objects.filter(poster__in=[posters])
         except:
+            return JsonResponse(
+                {"error": "Failed to get data from POST request."},
+                status=400)
+
+        # extract list of ids from JSON string turned dict
+        for x in posters_ids.values():
+            ids_list = [y  for y in x]
+        
+        # get followed users using poster ids, return error if failed
+        try:
+            posters = User.objects.filter(id__in=ids_list)
+        except:
+            return JsonResponse(
+                {"error": "Failed to get list of followed users."},
+                status=400)
+        
+        # get all posts from all followed users, return error if failed
+        try:
+            posts = Post.objects.filter(poster__in=posters)
+        except:
+            return JsonResponse(
+                {"error": "Failed to get posts from followed users."},
+                status=400
+            )
+
+        if not posters:
             return JsonResponse([], safe=False, status=200)
+
+        return JsonResponse({"error": "Failed"}, status=401)
             
 
     # if not GET or POST, return error message
