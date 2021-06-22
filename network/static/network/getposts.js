@@ -1,51 +1,3 @@
-function getPosts(posterID=null, postersIDs=null) {
-
-    // initialize url variable to later use in fetch call to load posts
-    var url = undefined
-
-    // if multiple posters' IDs are not specified, GET posts for one or all users
-    // if specified, run POST request to send IDs to allow retrieval
-    if (postersIDs === null) {
-
-        // if no poster is specified, specify API url for all posts
-        // if poster is specified, specify API url for only that user's posts
-        if (posterID === null) {
-            url = 'posts'
-        } else {
-            url = `posts/${posterID}`
-        }
-
-        // make GET call to load posts
-        // run function to generate HTML for posts
-        fetch(url)
-        .then(response => response.json())
-        .then(posts => {
-            displayPosts(posts)
-        });
-
-    } else {
-
-        url = 'posts'
-        // create POST request providing poster ids to the server
-        // run function to generate HTML for posts
-        fetch(url, {
-            method: 'POST',
-            body: JSON.stringify({
-                posters_ids: postersIDs
-            })
-        })
-        .then(response => response.json())
-        .then(posts => {
-            displayPosts(posts)
-        })
-        .catch((error) => {
-            console.error('Error:', error)
-        }) 
-
-    }
-
-}
-
 function displayPosts(posts) {
 
     // get container embedded in template to display posts and clear any existing inner content ahead of loading posts
@@ -53,7 +5,7 @@ function displayPosts(posts) {
     container.innerHTML = '';
 
     // if there are no posts, display a message to that end
-    if (posts.length === 0) {
+    if (posts === null || posts.length === 0) {
 
         let message = document.createElement('h4');
         message.innerHTML = "There are no posts available.";
@@ -105,4 +57,52 @@ function displayPosts(posts) {
 
         });
     }
+}
+
+function getPosts(posterID=null, postersIDs=null) {
+
+    // initialize url variable to later use in fetch call to load posts
+    var url = undefined
+
+    // if multiple posters' IDs are not specified, GET posts for one or all users
+    // if specified, run POST request to send IDs to allow retrieval
+    if (postersIDs === null) {
+
+        // if no poster is specified, specify API url for all posts
+        // if poster is specified, specify API url for only that user's posts
+        if (posterID === null) {
+            url = 'posts'
+        } else {
+            url = `posts/${posterID}`
+        }
+
+        // make GET call to load posts
+        // run function to generate HTML for posts
+        fetch(url)
+        .then(response => response.json())
+        .then(posts => {
+            displayPosts(posts)
+        });
+
+    } else {
+
+        url = 'posts'
+        // create POST request providing poster ids to the server
+        // run function to generate HTML for posts
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({
+                posters_ids: postersIDs
+            })
+        })
+        .then(response => response.json())
+        .then(posts => {
+            displayPosts(posts)
+        })
+        .catch((error) => {
+            console.error('Error:', error)
+        })
+
+    }
+
 }

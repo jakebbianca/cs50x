@@ -42,6 +42,7 @@ def user(request, user_id):
     return JsonResponse(user.serialize(), safe=False, status=200)
 
 
+@csrf_exempt
 @login_required
 def following(request):
 
@@ -143,20 +144,19 @@ def posts(request, poster_id=None):
         data = json.loads(request.body)
         
         # get poster ids from POST data, return error if failed
+        posters_ids = []
+
         try:
-            posters_ids = data.get("posters_ids")
+            for x in data["posters_ids"]:
+                posters_ids.append(x)
         except:
             return JsonResponse(
                 {"error": "Failed to get data from POST request."},
                 status=400)
-
-        # extract list of ids from JSON string turned dict
-        for x in posters_ids.values():
-            ids_list = [y  for y in x]
         
         # get followed users using poster ids, return error if failed
         try:
-            posters = User.objects.filter(id__in=ids_list)
+            posters = User.objects.filter(pk__in=[0, 1])
         except:
             return JsonResponse(
                 {"error": "Failed to get list of followed users."},
