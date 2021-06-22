@@ -9,7 +9,7 @@
 
 {% block script %}
     <script>
-        var posters_ids = "{{ users_followed }}"
+        var posters_ids = {{ users_followed }};
     </script>
     <script src="{% static 'network/getposts.js' %}"></script>
     <script src="{% static 'network/following.js' %}"></script>

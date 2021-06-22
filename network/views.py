@@ -58,10 +58,13 @@ def following(request):
     for item in followed_qs:
         users_followed.append(item.following.id)
 
+    print(f"IDs of users followed: {users_followed}")
+    print(f"Type of users_followed: {type(users_followed)}")
     if len(users_followed) == 0:
         users_followed = None
 
-    return render(request, "network/following.html", {"users_followed": users_followed})
+    return render(request, "network/following.html",
+                {"users_followed": users_followed})
 
 
 # under construction
@@ -142,22 +145,28 @@ def posts(request, poster_id=None):
 
         # load ids from JSON data body
         data = json.loads(request.body)
+        posters_ids = data.get("posters_ids")
         
         # get poster ids from POST data, return error if failed
-        posters_ids = []
+        #posters_ids = []
 
-        try:
-            for x in data["posters_ids"]:
-                posters_ids.append(x)
-        except:
-            return JsonResponse(
-                {"error": "Failed to get data from POST request."},
-                status=400)
+        #try:
+        #    for x in data["posters_ids"]:
+        #        print(x)
+        #        posters_ids.append(x)
+        #except:
+        #    return JsonResponse(
+        #        {"error": "Failed to get data from POST request."},
+        #        status=400)
         
+        print(f"List of ids: {posters_ids}")
+        print(f"Type of posters_ids is: {type(posters_ids)}")
         # get followed users using poster ids, return error if failed
+        # NEED THIS TO WORK PULLING IDS FROM JSON RESPONSE
         try:
-            posters = User.objects.filter(pk__in=[0, 1])
+            posters = User.objects.filter(pk__in=posters_ids)
         except:
+            print("Error getting posters")
             return JsonResponse(
                 {"error": "Failed to get list of followed users."},
                 status=400)
@@ -166,6 +175,7 @@ def posts(request, poster_id=None):
         try:
             posts = Post.objects.filter(poster__in=posters)
         except:
+            print("Error getting posts")
             return JsonResponse(
                 {"error": "Failed to get posts from followed users."},
                 status=400
@@ -173,8 +183,6 @@ def posts(request, poster_id=None):
 
         if not posters:
             return JsonResponse([], safe=False, status=200)
-
-        return JsonResponse({"error": "Failed"}, status=401)
             
 
     # if not GET or POST, return error message
