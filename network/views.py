@@ -190,7 +190,21 @@ def posts(request, poster_id=None):
         return JsonResponse({"error": "GET or POST request required."}, status=400)
 
     # finally, order the posts in reverse-chronological order and send data back
-    posts = posts.order_by("-post_datetime").all()
+    posts = posts.order_by("-id").all()
+
+    # get prev page cursor
+    # prev-cursor-post = posts.filter(id__lt=)
+
+    # filter posts by id >= id of next page cursor
+    # return 10 items (11 for next cursor?)
+    # posts = posts.filter(id__gte=next_cursor)[:11]
+    # get new next_cursor to send to template
+    # try:
+    #   new_next_cursor = posts[10].id
+    # except:
+    #   new_next_cursor = None
+
+
     return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
 
 
