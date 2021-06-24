@@ -143,26 +143,25 @@ def posts(request, poster_id=None):
 
     elif request.method == "POST":
 
-        # load ids from JSON data body
+        # load data from body of POST request and store
         data = json.loads(request.body)
         posters_ids = data.get("posters_ids")
-        
-        # get poster ids from POST data, return error if failed
-        #posters_ids = []
 
+
+        # I think I need to change this to POST
+        # Best way to check if user clicks NEXT or PREV
+
+
+        # check if user is loading the next page
         #try:
-        #    for x in data["posters_ids"]:
-        #        print(x)
-        #        posters_ids.append(x)
+            #clicked_next = data.get("clicked_next")
         #except:
-        #    return JsonResponse(
-        #        {"error": "Failed to get data from POST request."},
-        #        status=400)
+            #pass
+    
         
-        print(f"List of ids: {posters_ids}")
-        print(f"Type of posters_ids is: {type(posters_ids)}")
+
+        
         # get followed users using poster ids, return error if failed
-        # NEED THIS TO WORK PULLING IDS FROM JSON RESPONSE
         try:
             posters = User.objects.filter(pk__in=posters_ids)
         except:
@@ -195,8 +194,8 @@ def posts(request, poster_id=None):
     # get prev page cursor
     # prev-cursor-post = posts.filter(id__lt=)
 
-    # filter posts by id >= id of next page cursor
-    # return 10 items (11 for next cursor?)
+    # filter posts by id <= id of next page cursor
+    # return 11 items (10 + 1 for next cursor)
     # posts = posts.filter(id__gte=next_cursor)[:11]
     # get new next_cursor to send to template
     # try:
