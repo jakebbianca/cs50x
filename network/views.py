@@ -131,36 +131,21 @@ def post(request, post_id):
 @csrf_exempt
 def posts(request, poster_id=None):
 
-    if request.method == "GET":
-        # if a single poster is specified, load only that user's posts
-        # if a single poster is not specified, load all posts from all users
-        if poster_id is not None:
-            # get specific page of posts
-            poster = User.objects.get(pk=poster_id)
-            posts = Post.objects.filter(poster=poster)
-        else:
-            posts = Post.objects.all()
+    if request.method != "POST":
+        return JsonResponse({"error": "GET or POST request required."}, status=400)
 
-    elif request.method == "POST":
+    # load data from body of POST request and store
+    data = json.loads(request.body)
+    posters_ids = data.get("posters_ids")
 
-        # load data from body of POST request and store
-        data = json.loads(request.body)
-        posters_ids = data.get("posters_ids")
+    # if a single poster is specified, load only that user's posts
+    if poster_id is not None:
+        # get specific page of posts
+        poster = User.objects.get(pk=poster_id)
+        posts = Post.objects.filter(poster=poster)
 
-
-        # I think I need to change this to POST
-        # Best way to check if user clicks NEXT or PREV
-
-
-        # check if user is loading the next page
-        #try:
-            #clicked_next = data.get("clicked_next")
-        #except:
-            #pass
-    
-        
-
-        
+    # if multiple user ids are provided, load their posts
+    elif len(posters_ids) != 0:
         # get followed users using poster ids, return error if failed
         try:
             posters = User.objects.filter(pk__in=posters_ids)
@@ -169,6 +154,9 @@ def posts(request, poster_id=None):
             return JsonResponse(
                 {"error": "Failed to get list of followed users."},
                 status=400)
+
+        if not posters:
+            return JsonResponse([], safe=False, status=200)
         
         # get all posts from all followed users, return error if failed
         try:
@@ -180,16 +168,32 @@ def posts(request, poster_id=None):
                 status=400
             )
 
-        if not posters:
-            return JsonResponse([], safe=False, status=200)
-            
-
-    # if not GET or POST, return error message
+    #if no user ids are provided, load all posts from all users
     else:
-        return JsonResponse({"error": "GET or POST request required."}, status=400)
+        posts = Post.objects.all()
 
-    # finally, order the posts in reverse-chronological order and send data back
+
+    # order the posts in reverse-chronological order
     posts = posts.order_by("-id").all()
+
+    # check for pagination error, NEXT and PREV
+    if data.get("clicked_next") == True and data.get("clicked_prev") == True:
+        return JsonResponse(
+            {"error": "Request included NEXT and PREV = True"},
+            status=400
+        )
+
+
+    # WORKING ON THIS
+    # check if user is loading the next page
+    if data.get("clicked_next") == True:
+        next_cursor = data.get("next_cursor")
+
+    elif data.get("clicked_prev") == True:
+        prev_cursor = data.get("prev_cursor")
+
+    else:
+        pass
 
     # get prev page cursor
     # prev-cursor-post = posts.filter(id__lt=)
