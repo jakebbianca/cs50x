@@ -1,6 +1,12 @@
-function displayPosts(posts) {
+function displayPosts(
+    posts,
+    posterID=null,
+    postersIDs=null,
+    prevCursor=null,
+    nextCursor=null) {
 
-    // get container embedded in template to display posts and clear any existing inner content ahead of loading posts
+    // get container embedded in template to display posts and 
+    // clear any existing inner content ahead of loading posts
     let container = document.querySelector('.posts-ctn');
     container.innerHTML = '';
 
@@ -56,53 +62,95 @@ function displayPosts(posts) {
             }
 
         });
+
+        // Create elements for page buttons and store cursor values
+        let buttonsContainer = document.querySelector('.posts-page-btn-ctn');
+        buttonsContainer.innerHTML = '';
+        let prevButton = document.createElement('button');
+        let nextButton = document.createElement('button');
+
+        // Set text content for buttons
+        prevButton.textContent = 'Previous'
+        nextButton.textContent = 'Next'
+
+        prevButton.type = 'button'
+        nextButton.type = 'button'
+
+        prevButton.setAttribute('class', 'btn btn-secondary')
+        nextButton.setAttribute('class', 'btn btn-secondary')
+
+        // Set values and onClick events for prev and next buttons
+        // Only if matching cursor has value, otherwise not needed
+        if (prevCursor != null) {
+            prevButton.value = prevCursor;
+            prevButton.onclick = () => {
+                getPosts(
+                    posterID,
+                    postersIDs,
+                    prevCursor,
+                    nextCursor,
+                    clickedPrev = True,
+                    clickedNext = null
+                )
+            }
+        }
+
+        if (nextCursor != null) {
+            nextButton.value = nextCursor;
+            nextButton.onclick = () => {
+                getPosts(
+                    posterID,
+                    postersIDs,
+                    prevCursor,
+                    nextCursor,
+                    clickedPrev = null,
+                    clickedNext = True
+                )
+            }
+
+        }
+
+        // attach buttons to container
+        buttonsContainer.append(prevButton, nextButton)
+
     }
 }
 
-function getPosts(posterID=null, postersIDs=null) {
+function getPosts(
+    posterID=null,
+    postersIDs=null,
+    prevCursor=null,
+    nextCursor=null,
+    clickedPrev=null,
+    clickedNext=null
+    ) {
 
     // initialize url variable to later use in fetch call to load posts
-    var url = undefined
+    const url = 'posts'
 
-    // if multiple posters' IDs are not specified, GET posts for one or all users
-    // if specified, run POST request to send IDs to allow retrieval
-    if (postersIDs === null) {
-
-        // if no poster is specified, specify API url for all posts
-        // if poster is specified, specify API url for only that user's posts
-        if (posterID === null) {
-            url = 'posts'
-        } else {
-            url = `posts/${posterID}`
-        }
-
-        // make GET call to load posts
-        // run function to generate HTML for posts
-        fetch(url)
-        .then(response => response.json())
-        .then(posts => {
-            displayPosts(posts)
-        });
-
-    } else {
-
-        url = 'posts'
-        // create POST request providing poster ids to the server
-        // run function to generate HTML for posts
-        fetch(url, {
-            method: 'POST',
-            body: JSON.stringify({
-                posters_ids: postersIDs
-            })
+    // create POST request providing poster ids to the server
+    // run function to generate HTML for posts
+    fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            poster_id: posterID,
+            posters_ids: postersIDs,
+            prev_cursor: prevCursor,
+            next_cursor: nextCursor,
+            clicked_prev: clickedPrev,
+            clicked_next: clickedNext
         })
-        .then(response => response.json())
-        .then(posts => {
-            displayPosts(posts)
-        })
-        .catch((error) => {
-            console.error('Error:', error)
-        })
-
-    }
-
+    })
+    .then(response => response.json())
+    .then(data => {
+        displayPosts(
+            data.posts,
+            data.posterID,
+            data.postersIDs,
+            data.prevCursor,
+            data.newCursor)
+    })
+    .catch((error) => {
+        console.error('Error:', error)
+    })
 }

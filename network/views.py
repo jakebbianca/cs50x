@@ -129,13 +129,14 @@ def post(request, post_id):
 
 
 @csrf_exempt
-def posts(request, poster_id=None):
+def posts(request):
 
     if request.method != "POST":
-        return JsonResponse({"error": "GET or POST request required."}, status=400)
+        return JsonResponse({"error": "POST request required."}, status=400)
 
     # load data from body of POST request and store
     data = json.loads(request.body)
+    poster_id = data.get("poster_id")
     posters_ids = data.get("posters_ids")
 
     # if a single poster is specified, load only that user's posts
@@ -152,7 +153,7 @@ def posts(request, poster_id=None):
         try:
             posters = User.objects.filter(pk__in=posters_ids)
         except:
-            print("Error getting posters")
+            print("Error getting posters.")
             return JsonResponse(
                 {"error": "Failed to get list of followed users."},
                 status=400)
@@ -165,7 +166,7 @@ def posts(request, poster_id=None):
         try:
             posts = Post.objects.filter(poster__in=posters)
         except:
-            print("Error getting posts")
+            print("Error getting posts.")
             return JsonResponse(
                 {"error": "Failed to get posts from followed users."},
                 status=400
@@ -190,11 +191,9 @@ def posts(request, poster_id=None):
             status=400
         )
 
-
     # order posts in reverse-chronological order
     posts = posts.order_by("-id").all()
 
-    # WORKING ON THIS
     # check if user is loading the prev page
     if data.get("clicked_prev") == True:
 
@@ -260,14 +259,15 @@ def posts(request, poster_id=None):
     # define and encode data for JSON response
     json_response_data = {
         "posts": [post.serialize() for post in posts_to_display],
-        "prev_cursor": new_prev_cursor,
-        "next_cursor": new_next_cursor
+        "posterID": poster_id,
+        "postersIDs": posters_ids,
+        "prevCursor": new_prev_cursor,
+        "nextCursor": new_next_cursor
     }
 
-
+    # return JSON data per fetch request
     return JsonResponse(
         json.dumps(json_response_data),
-        safe=False,
         status=200)
 
 
