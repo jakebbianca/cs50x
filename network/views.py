@@ -140,12 +140,14 @@ def posts(request, poster_id=None):
 
     # if a single poster is specified, load only that user's posts
     if poster_id is not None:
-        # get specific page of posts
+
+        # find specified poster and get qs for their posts
         poster = User.objects.get(pk=poster_id)
         posts = Post.objects.filter(poster=poster)
 
     # if multiple user ids are provided, load their posts
     elif len(posters_ids) != 0:
+
         # get followed users using poster ids, return error if failed
         try:
             posters = User.objects.filter(pk__in=posters_ids)
@@ -155,10 +157,11 @@ def posts(request, poster_id=None):
                 {"error": "Failed to get list of followed users."},
                 status=400)
 
+        # if for some reason no posters are found, return no posts
         if not posters:
             return JsonResponse([], safe=False, status=200)
         
-        # get all posts from all followed users, return error if failed
+        # get qs of all posts from all followed users, return error if failed
         try:
             posts = Post.objects.filter(poster__in=posters)
         except:
@@ -172,43 +175,100 @@ def posts(request, poster_id=None):
     else:
         posts = Post.objects.all()
 
-
-    # order the posts in reverse-chronological order
-    posts = posts.order_by("-id").all()
-
     # check for pagination error, NEXT and PREV
-    if data.get("clicked_next") == True and data.get("clicked_prev") == True:
+    # if unable to access either click variable, return an error
+    try:
+        if (data.get("clicked_next") == True and 
+            data.get("clicked_prev") == True):
+            return JsonResponse(
+                {"error": "Request included NEXT and PREV = True"},
+                status=400
+            )
+    except:
         return JsonResponse(
-            {"error": "Request included NEXT and PREV = True"},
+            {"error": "Could not find one of clickedd_next or clicked_prev"},
             status=400
         )
 
 
-    # WORKING ON THIS
-    # check if user is loading the next page
-    if data.get("clicked_next") == True:
-        next_cursor = data.get("next_cursor")
+    # order posts in reverse-chronological order
+    posts = posts.order_by("-id").all()
 
-    elif data.get("clicked_prev") == True:
+    # WORKING ON THIS
+    # check if user is loading the prev page
+    if data.get("clicked_prev") == True:
+
+        # get prev cursor from POST request
         prev_cursor = data.get("prev_cursor")
 
+        # define qs for posts to load and new prev cursor
+        p1 = posts.filter(pk__gte=prev_cursor)[:11]
+
+        # if less than 11 posts are retrieved, load first page of posts
+        # if 11 posts are retrieved, store cursor and posts to display
+        if len(p1) < 11:
+            new_prev_cursor = None
+            posts_to_display = posts[:10]
+        else:
+            new_prev_cursor = p1[0].id
+            posts_to_display = p1[1:11]
+
+        # define qs for and store new next cursor
+        p2 = posts.filter(pk__lt=prev_cursor)[:1]
+        new_next_cursor = p2[0].id
+
+
+    elif data.get("clicked_next") == True:
+
+        next_cursor = data.get("next_cursor")
+
+        # define qs for posts to load and new next cursor
+        p1 = posts.filter(pk__lte=next_cursor)[:11]
+
+        # if less than 11 posts are retrieved, last page of posts
+        # if 11 posts are retrieved, store cursor and posts to display
+        if len(p1) < 11:
+            new_next_cursor = None
+            posts_to_display = p1
+        else:
+            new_next_cursor = p1[11]
+            posts_to_display = p1[0:10]        
+
+        # define qs for and store new prev cursor
+        p2 = posts.filter(pk__gt=next_cursor)[:1]
+        new_prev_cursor = p2[0]
+
+    # if loading fresh post page (no next or prev)
+    # load newest 10 posts, get next cursor
     else:
-        pass
 
-    # get prev page cursor
-    # prev-cursor-post = posts.filter(id__lt=)
+        # load 1st 11 posts (10 to display, one for next cursor)
+        posts = posts[:11]
 
-    # filter posts by id <= id of next page cursor
-    # return 11 items (10 + 1 for next cursor)
-    # posts = posts.filter(id__gte=next_cursor)[:11]
-    # get new next_cursor to send to template
-    # try:
-    #   new_next_cursor = posts[10].id
-    # except:
-    #   new_next_cursor = None
+        # set prev cursor to None since we are loading first page
+        new_prev_cursor = None
+
+        # if less than 11 posts are loaded, load available without cursor
+        # if 11 posts retrieved, store cursor and posts to display
+        if len(posts) < 11:
+            new_next_cursor = None
+            posts_to_display = posts
+        else:
+            new_next_cursor = posts[11].id
+            posts_to_display = posts[:10]
+
+    # define and encode data for JSON response
+    json_response_data = {
+        "posts": [post.serialize() for post in posts_to_display],
+        "prev_cursor": new_prev_cursor,
+        "next_cursor": new_next_cursor
+    }
 
 
-    return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
+    return JsonResponse(
+        json.dumps(json_response_data),
+        safe=False,
+        status=200)
 
 
 def login_view(request):
