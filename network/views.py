@@ -72,9 +72,15 @@ def following_API(request, other_user_id=None):
 
     if other_user_id is not None:
         other_user = User.objects.get(pk=other_user_id)
-        user_follows = Follows.objects.filter(user=other_user, active_bool=True)
+        user_follows = Follows.objects.filter(
+            user=other_user,
+            active_bool=True
+        )
     else:
-        user_follows = Follows.objects.filter(user=request.user, active_bool=True)
+        user_follows = Follows.objects.filter(
+            user=request.user,
+            active_bool=True
+        )
 
     return JsonResponse(user_follows.serialize(), safe=False, status=200)
 
@@ -147,7 +153,7 @@ def posts(request):
         posts = Post.objects.filter(poster=poster)
 
     # if multiple user ids are provided, load their posts
-    elif len(posters_ids) != 0:
+    elif posters_ids is not None:
 
         # get followed users using poster ids, return error if failed
         try:
@@ -253,7 +259,7 @@ def posts(request):
             new_next_cursor = None
             posts_to_display = posts
         else:
-            new_next_cursor = posts[11].id
+            new_next_cursor = posts[10].id
             posts_to_display = posts[:10]
 
     # define and encode data for JSON response
@@ -267,7 +273,7 @@ def posts(request):
 
     # return JSON data per fetch request
     return JsonResponse(
-        json.dumps(json_response_data),
+        json_response_data,
         status=200)
 
 
