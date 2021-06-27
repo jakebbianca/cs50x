@@ -64,7 +64,7 @@ function displayPosts(
         });
 
         // Create elements for page buttons and store cursor values
-        let buttonsContainer = document.querySelector('.posts-page-btn-ctn');
+        let buttonsContainer = document.querySelector('.posts-page-btns-ctn');
         buttonsContainer.innerHTML = '';
         let prevButton = document.createElement('button');
         let nextButton = document.createElement('button');
@@ -73,9 +73,11 @@ function displayPosts(
         prevButton.textContent = 'Previous'
         nextButton.textContent = 'Next'
 
+        // Set types to buttons
         prevButton.type = 'button'
         nextButton.type = 'button'
 
+        // Set bootstrap button classes
         prevButton.setAttribute('class', 'btn btn-secondary')
         nextButton.setAttribute('class', 'btn btn-secondary')
 
@@ -89,10 +91,12 @@ function displayPosts(
                     postersIDs,
                     prevCursor,
                     nextCursor,
-                    clickedPrev = True,
+                    clickedPrev = true,
                     clickedNext = null
                 )
             }
+        } else {
+            prevButton.disabled = true;
         }
 
         if (nextCursor != null) {
@@ -104,10 +108,12 @@ function displayPosts(
                     prevCursor,
                     nextCursor,
                     clickedPrev = null,
-                    clickedNext = True
+                    clickedNext = true
                 )
             }
 
+        } else {
+            nextButton.disabled = true;
         }
 
         // attach buttons to container

@@ -153,6 +153,7 @@ def posts(request):
         posts = Post.objects.filter(poster=poster)
 
     # if multiple user ids are provided, load their posts
+    # for following page
     elif posters_ids is not None:
 
         # get followed users using poster ids, return error if failed

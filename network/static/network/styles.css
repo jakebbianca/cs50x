@@ -8,7 +8,14 @@ h4 {
 }
 
 .body {
-    margin: 0 2rem 0 2rem;
+    margin: 0 10rem 0 10rem;
+}
+
+.btn:disabled,
+.btn:disabled:hover,
+.btn:disabled:active,
+.btn:disabled:hover:active {
+    cursor: default;
 }
 
 .posts-ctn {
@@ -17,7 +24,7 @@ h4 {
 
 .post-ctn {
     border: 1px solid lightgrey;
-    min-height: 150px;
+    min-height: 200px;
     padding: 1rem;
     word-wrap: break-word;
 }
