@@ -208,20 +208,27 @@ def posts(request):
         prev_cursor = data.get("prev_cursor")
 
         # define qs for posts to load and new prev cursor
-        p1 = posts.filter(pk__gte=prev_cursor)[:11]
+        p1 = posts.filter(pk__gte=prev_cursor)
+        p1 = p1[:11]
 
         # if less than 11 posts are retrieved, load first page of posts
         # if 11 posts are retrieved, store cursor and posts to display
         if len(p1) < 11:
+
             new_prev_cursor = None
-            posts_to_display = posts[:10]
+            first_page_posts = posts
+            first_page_posts = first_page_posts[:11]
+
+            new_next_cursor = first_page_posts[10]
+            posts_to_display = first_page_posts[:10]
         else:
             new_prev_cursor = p1[0].id
-            posts_to_display = p1[1:11]
+            posts_to_display = p1[1:10]
 
         # define qs for and store new next cursor
-        p2 = posts.filter(pk__lt=prev_cursor)[:1]
-        new_next_cursor = p2[0].id
+        p2 = posts.filter(pk__lt=prev_cursor)
+        p2 = p2[:10]
+        new_next_cursor = p2[9].id
 
 
     elif bool(data.get("clicked_next")) is True:
