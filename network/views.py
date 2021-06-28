@@ -202,7 +202,7 @@ def posts(request):
     posts = posts.order_by("-id").all()
 
     # check if user is loading the prev page
-    if data.get("clicked_prev") == 'true':
+    if bool(data.get("clicked_prev")) is True:
 
         # get prev cursor from POST request
         prev_cursor = data.get("prev_cursor")
@@ -224,12 +224,13 @@ def posts(request):
         new_next_cursor = p2[0].id
 
 
-    elif data.get("clicked_next") == 'true':
+    elif bool(data.get("clicked_next")) is True:
 
         next_cursor = data.get("next_cursor")
 
         # define qs for posts to load and new next cursor
-        p1 = posts.filter(pk__lte=next_cursor)[:11]
+        p1 = posts.filter(pk__lte=next_cursor)
+        p1 = p1[:11]
 
         # if less than 11 posts are retrieved, last page of posts
         # if 11 posts are retrieved, store cursor and posts to display
@@ -237,12 +238,13 @@ def posts(request):
             new_next_cursor = None
             posts_to_display = p1
         else:
-            new_next_cursor = p1[11]
-            posts_to_display = p1[0:10]        
+            new_next_cursor = p1[10].id
+            posts_to_display = p1[:10]
 
         # define qs for and store new prev cursor
-        p2 = posts.filter(pk__gt=next_cursor)[:1]
-        new_prev_cursor = p2[0]
+        p2 = posts.filter(pk__gt=next_cursor)
+        p2 = p2[:1]
+        new_prev_cursor = p2[0].id
 
     # if loading fresh post page (no next or prev)
     # load newest 10 posts, get next cursor
@@ -263,9 +265,11 @@ def posts(request):
             new_next_cursor = posts[10].id
             posts_to_display = posts[:10]
 
+
+    posts_serialized = [post.serialize() for post in posts_to_display]
     # define and encode data for JSON response
     json_response_data = {
-        "posts": [post.serialize() for post in posts_to_display],
+        "posts": posts_serialized,
         "posterID": poster_id,
         "postersIDs": posters_ids,
         "prevCursor": new_prev_cursor,
