@@ -202,7 +202,7 @@ def posts(request):
     posts = posts.order_by("-id").all()
 
     # check if user is loading the prev page
-    if data.get("clicked_prev") == True:
+    if data.get("clicked_prev") == 'true':
 
         # get prev cursor from POST request
         prev_cursor = data.get("prev_cursor")
@@ -224,7 +224,7 @@ def posts(request):
         new_next_cursor = p2[0].id
 
 
-    elif data.get("clicked_next") == True:
+    elif data.get("clicked_next") == 'true':
 
         next_cursor = data.get("next_cursor")
 

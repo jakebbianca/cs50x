@@ -154,7 +154,7 @@ function getPosts(
             data.posterID,
             data.postersIDs,
             data.prevCursor,
-            data.newCursor)
+            data.nextCursor)
     })
     .catch((error) => {
         console.error('Error:', error)
