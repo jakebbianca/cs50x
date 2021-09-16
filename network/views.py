@@ -194,7 +194,7 @@ def posts(request):
             )
     except:
         return JsonResponse(
-            {"error": "Could not find one of clickedd_next or clicked_prev"},
+            {"error": "Could not find one of clicked_next or clicked_prev"},
             status=400
         )
 
@@ -209,26 +209,30 @@ def posts(request):
 
         # define qs for posts to load and new prev cursor
         p1 = posts.filter(pk__gte=prev_cursor)
-        p1 = p1[:11]
+        n_p1 = p1.count()
+
 
         # if less than 11 posts are retrieved, load first page of posts
         # if 11 posts are retrieved, store cursor and posts to display
-        if len(p1) < 11:
+        if n_p1 < 11:
 
             new_prev_cursor = None
-            first_page_posts = posts
-            first_page_posts = first_page_posts[:11]
+            first_page_posts = posts[:11]
 
-            new_next_cursor = first_page_posts[10]
+            new_next_cursor = first_page_posts[10].id
             posts_to_display = first_page_posts[:10]
+        
         else:
-            new_prev_cursor = p1[0].id
-            posts_to_display = p1[1:10]
+            
+            p1_pc_offset = n_p1 - 11
+            p1_ptd_offset = n_p1 - 10
+            new_prev_cursor = posts[p1_pc_offset].id
+            posts_to_display = posts[p1_ptd_offset:p1_ptd_offset+10]
+            print(posts_to_display)
 
-        # define qs for and store new next cursor
-        p2 = posts.filter(pk__lt=prev_cursor)
-        p2 = p2[:10]
-        new_next_cursor = p2[9].id
+            # define qs for and store new next cursor
+            p2 = posts.filter(pk__lt=prev_cursor)
+            new_next_cursor = p2[0].id
 
 
     elif bool(data.get("clicked_next")) is True:
@@ -250,8 +254,8 @@ def posts(request):
 
         # define qs for and store new prev cursor
         p2 = posts.filter(pk__gt=next_cursor)
-        p2 = p2[:1]
-        new_prev_cursor = p2[0].id
+        n_p2 = p2.count() - 1
+        new_prev_cursor = p2[n_p2].id
 
     # if loading fresh post page (no next or prev)
     # load newest 10 posts, get next cursor

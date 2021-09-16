@@ -17,7 +17,7 @@ function displayPosts(
         message.innerHTML = "There are no posts available.";
 
         container.append(message);
-    
+            
     } else {
 
         // create elements and styling for each post being fetched
