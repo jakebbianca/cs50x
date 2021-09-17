@@ -284,7 +284,8 @@ def posts(request):
         "posterID": poster_id,
         "postersIDs": posters_ids,
         "prevCursor": new_prev_cursor,
-        "nextCursor": new_next_cursor
+        "nextCursor": new_next_cursor,
+        "userID": request.user.id
     }
 
     # return JSON data per fetch request

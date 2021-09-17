@@ -3,7 +3,8 @@ function displayPosts(
     posterID=null,
     postersIDs=null,
     prevCursor=null,
-    nextCursor=null) {
+    nextCursor=null,
+    userID=null) {
 
     // get container embedded in template to display posts and 
     // clear any existing inner content ahead of loading posts
@@ -17,7 +18,7 @@ function displayPosts(
         message.innerHTML = "There are no posts available.";
 
         container.append(message);
-            
+
     } else {
 
         // create elements and styling for each post being fetched
@@ -49,6 +50,30 @@ function displayPosts(
 
             // Add link which redirects to user's profile page
             postPosterLink.setAttribute('href', `${post.poster_url}`)
+
+            // Add edit button for user's own posts
+            if (userID == posterID) {
+
+                originalText = postContent.innerHTML
+
+                let editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                subtitleContainer.append(editButton);
+                editButton.setAttribute('class', 'btn btn-secondary');
+
+                editButton.onclick = () => {
+
+                    postContent.contentEditable = 'true';
+                    postContent.focus();
+                    postContent.addEventListener('focusout', (e) => {
+                        postContent.contentEditable = 'false';
+                        contEditText = postContent.innerHTML;
+                        postContent.innerHTML = originalText;
+                    });
+                }
+
+
+            }
 
             // Handle case if post was edited
             if (post.edit_bool == true) {
@@ -120,6 +145,12 @@ function displayPosts(
         buttonsContainer.append(prevButton, nextButton)
 
     }
+
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+    });
 }
 
 function getPosts(
@@ -154,7 +185,8 @@ function getPosts(
             data.posterID,
             data.postersIDs,
             data.prevCursor,
-            data.nextCursor)
+            data.nextCursor,
+            data.user_id)
     })
     .catch((error) => {
         console.error('Error:', error)
