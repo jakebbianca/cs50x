@@ -51,25 +51,61 @@ function displayPosts(
             // Add link which redirects to user's profile page
             postPosterLink.setAttribute('href', `${post.poster_url}`)
 
-            // Add edit button for user's own posts
+            // Provide edit functionality for front-end for user's own posts
             if (userID == posterID) {
 
-                originalText = postContent.innerHTML
-
+                // Create edit button on user's own posts
                 let editButton = document.createElement('button');
                 editButton.textContent = 'Edit';
-                subtitleContainer.append(editButton);
                 editButton.setAttribute('class', 'btn btn-secondary');
+
+                // Create submission button for editing posts
+                let editSubmitButton = document.createElement('button');
+                editSubmitButton.textContent = 'Submit edited post';
+                editSubmitButton.setAttribute('class', 'btn btn-secondary');
+                editSubmitButton.hidden = true;
+                editSubmitButton.disabled = true;
+
+                subtitleContainer.append(editButton, editSubmitButton);
 
                 editButton.onclick = () => {
 
-                    postContent.contentEditable = 'true';
-                    postContent.focus();
-                    postContent.addEventListener('focusout', (e) => {
-                        postContent.contentEditable = 'false';
-                        contEditText = postContent.innerHTML;
-                        postContent.innerHTML = originalText;
-                    });
+                    // Confirm that edit button is clicked
+                    let editButtonClicked = true;
+
+                    // create and show a text area, fill with text from original post
+                    let originalText = postContent.innerHTML
+                    let postContentTextarea = document.createElement('textarea')
+                    postContentTextarea.value = originalText
+                    postContent.hidden = true;
+                    postContainer.append(postContentTextarea)
+
+                    // hide edit button, show and enable submit button
+                    editButton.hidden = true;
+                    editButton.disabled = true;
+                    editSubmitButton.hidden = false;
+                    editSubmitButton.disabled = false;
+
+                    // reset clicked variables
+                    if (editSubmitClicked in window) {
+                        editSubmitClicked = false
+                    }
+
+                }
+
+                editSubmitButton.onclick = () => {
+
+                    // if edit button was never clicked, refresh the page
+                    if (!(editButtonClicked in window)) {
+                        location.reload()
+                    }
+
+                    //TODOTODOTODO
+                    
+                    let editSubmitClicked = true;
+
+
+
                 }
 
 
@@ -152,6 +188,7 @@ function displayPosts(
         behavior: 'smooth'
     });
 }
+
 
 function getPosts(
     posterID=null,
