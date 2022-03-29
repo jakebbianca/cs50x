@@ -32,7 +32,8 @@ function displayPosts(
             let postPosterLink = document.createElement('a');
             let postDatetime = document.createElement('span');                
             let postContent = document.createElement('p');
-            // let postLikes = document.createElement('h3');
+            let postLikes = document.createElement('h3');
+            let likeButton = document.createElement('button');
 
             // Append inner elements to container
             container.append(postContainer);
@@ -43,7 +44,7 @@ function displayPosts(
             postPosterLink.innerHTML = `${post.poster_username}`;
             postDatetime.innerHTML = `\tPosted ${post.post_datetime}`;
             postContent.innerHTML = `${post.content}`;
-            // postLikes = probably fetch call, may want to change Post model so that likes counter is held there too
+            postLikes.innerHTML = `Liked ${post.likes} times`;
 
             // Add core attributes -- classes, ids, etc.
             postContainer.setAttribute('class', 'post-ctn');
@@ -64,7 +65,7 @@ function displayPosts(
                 // Create submission button for editing posts
                 let editSubmitButton = document.createElement('button');
                 editSubmitButton.textContent = 'Submit edited post';
-                editSubmitButton.setAttribute('class', 'btn btn-secondary');
+                editSubmitButton.setAttribute('class', 'btn btn-primary');
                 editSubmitButton.hidden = true;
                 editSubmitButton.disabled = true;
 
@@ -119,39 +120,38 @@ function displayPosts(
                         location.reload()
                     }
 
+                    // if text was not changed on submit, revert to original display
+                    // if text has changed, run PUT request and show success msg
                     if (postContentTextarea.value != originalText) {
-                        
                         editPost(postID=currentPostID, newText=postContentTextarea.value)
-                        location.reload()
-
-                    } else {
-
-                        editButtonClicked = false;
-                        postContentTextarea.hidden = true;
-                        postContent.hidden = false;
-                        editSubmitButton.hidden = true;
-                        editSubmitButton.disabled = true;
-                        editButton.hidden = false;
-                        editButton.disabled = false;
-                        editSubmitClicked = true;
-
                     }
+
+                    editButtonClicked = false;
+                    postContentTextarea.hidden = true;
+                    postContent.hidden = false;
+                    editSubmitButton.hidden = true;
+                    editSubmitButton.disabled = true;
+                    editButton.hidden = false;
+                    editButton.disabled = false;
+                    editSubmitClicked = true;
 
                 }
 
-
             }
 
-            // Handle case if post was edited
-            if (post.edit_bool == true) {
+            likeButton.textContent = 'Like this post';
+            likeButton.setAttribute('class', 'btn btn-secondary');
 
-                // create element, fill in with timestamp, append to subtitle, set attributes, etc.
-                postEditDatetime = document.createElement('span')
-                postEditDatetime.innerHTML = ` and updated ${post.edit_datetime}`
-                subtitleContainer.append(postEditDatetime);
-                postEditDatetime.setAttribute('class', 'post-datetime')
+            let likesCtn = document.createElement('span');
+            likesCtn.setAttribute('class', 'likes-ctn')
+            likesCtn.append(postLikes, likeButton);
+            postContainer.append(likesCtn);
 
+            likeButton.onclick = () => {
+                //todo
             }
+
+
 
         });
 
