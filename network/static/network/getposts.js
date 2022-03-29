@@ -24,6 +24,8 @@ function displayPosts(
         // create elements and styling for each post being fetched
         posts.forEach(post => {
 
+            let currentPostID = post.post
+
             // Create the elements for each post
             let postContainer = document.createElement('div');
             let subtitleContainer = document.createElement('div');
@@ -68,18 +70,25 @@ function displayPosts(
 
                 subtitleContainer.append(editButton, editSubmitButton);
 
+                let originalText = postContent.innerHTML
+                let postContentTextarea = document.createElement('textarea')
+                postContentTextarea.value = originalText
+                postContentTextarea.hidden = true;
+                postContainer.append(postContentTextarea);
+
+                let editButtonClicked = false;
+                let editSubmitClicked = false;
+
+
                 editButton.onclick = () => {
 
                     // Confirm that edit button is clicked
-                    let editButtonClicked = true;
+                    editButtonClicked = true;
 
-                    // create and show a text area, fill with text from original post
-                    let originalText = postContent.innerHTML
-                    let postContentTextarea = document.createElement('textarea')
-                    postContentTextarea.value = originalText
+                    // hide original post text and show text area
                     postContent.hidden = true;
-                    postContainer.append(postContentTextarea)
-
+                    postContentTextarea.hidden = false;
+                    
                     // hide edit button, show and enable submit button
                     editButton.hidden = true;
                     editButton.disabled = true;
@@ -87,7 +96,7 @@ function displayPosts(
                     editSubmitButton.disabled = false;
 
                     // reset clicked variables
-                    if (editSubmitClicked in window) {
+                    if (editSubmitClicked === true) {
                         editSubmitClicked = false
                     }
 
@@ -96,15 +105,37 @@ function displayPosts(
                 editSubmitButton.onclick = () => {
 
                     // if edit button was never clicked, refresh the page
-                    if (!(editButtonClicked in window)) {
+                    if (editButtonClicked === false) {
                         location.reload()
                     }
 
-                    //TODOTODOTODO
-                    
-                    let editSubmitClicked = true;
+                    // if textarea is never created, refresh the page
+                    if (!(postContentTextarea) in window) {
+                        location.reload()
+                    }
 
+                    // if there is no original text to reference, refresh page
+                    if (!(originalText) in window) {
+                        location.reload()
+                    }
 
+                    if (postContentTextarea.value != originalText) {
+                        
+                        editPost(postID=currentPostID, newText=postContentTextarea.value)
+                        location.reload()
+
+                    } else {
+
+                        editButtonClicked = false;
+                        postContentTextarea.hidden = true;
+                        postContent.hidden = false;
+                        editSubmitButton.hidden = true;
+                        editSubmitButton.disabled = true;
+                        editButton.hidden = false;
+                        editButton.disabled = false;
+                        editSubmitClicked = true;
+
+                    }
 
                 }
 
@@ -228,4 +259,24 @@ function getPosts(
     .catch((error) => {
         console.error('Error:', error)
     })
+}
+
+
+async function editPost(postID, newText) {
+
+    const response = await fetch(`post/${postID}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            content: newText,
+        })
+    });
+
+    // if response is not ok, throw error, else, log the result
+    if (!response.ok) {
+        const message = `Error: ${response.status}`;
+        throw new Error(message);
+    } else {
+        const result = await response.json();
+        console.log(result);
+    }
 }

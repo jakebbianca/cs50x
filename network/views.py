@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 from .models import User, Post, Follows, Likes
 
@@ -125,13 +126,26 @@ def post(request, post_id):
     if request.method != "PUT":
         return JsonResponse({"error": "PUT request required."}, status=400)
 
-    # confirm that post exists and store in variable if so, otherwise return error
     try:
         post = Post.objects.get(pk=post_id)
+
     except Post.DoesNotExist:
         return JsonResponse({"error": "Post not found."}, status=400)
+    except:
+        return JsonResponse({"error": "Error occurred while accessing post."}, status=400)
 
-    # more TODO
+    finally:
+        # make edits to post per user
+        data = json.loads(request.body)
+        post.content = data.get("content")
+        post.edit_bool = True
+        post.edit_datetime = timezone.now()
+
+        post.save()
+
+        #return successful response once post is saved
+        return JsonResponse({"message": "Post edited successfully"}, status=204)
+
 
 
 @csrf_exempt
