@@ -123,28 +123,69 @@ def new(request):
 def post(request, post_id):
     
     # Editing or liking a post must be via PUT method
-    if request.method != "PUT":
-        return JsonResponse({"error": "PUT request required."}, status=400)
+    if request.method == "PUT":
 
-    try:
-        post = Post.objects.get(pk=post_id)
+        try:
+            post = Post.objects.get(pk=post_id)
 
-    except Post.DoesNotExist:
-        return JsonResponse({"error": "Post not found."}, status=400)
-    except:
-        return JsonResponse({"error": "Error occurred while accessing post."}, status=400)
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found."}, status=400)
+        except:
+            return JsonResponse({"error": "Error occurred while accessing post."}, status=400)
 
-    finally:
-        # make edits to post per user
-        data = json.loads(request.body)
-        post.content = data.get("content")
-        post.edit_bool = True
-        post.edit_datetime = timezone.now()
+        finally:
 
-        post.save()
+            data = json.loads(request.body)
 
-        #return successful response once post is saved
-        return JsonResponse({"message": "Post edited successfully"}, status=204)
+            if "liker_id" not in data:
+
+                post.content = data.get("content")
+                post.edit_bool = True
+                post.edit_datetime = timezone.now()
+                post.save()
+
+                #return successful response once post is saved
+                return JsonResponse({"message": "Post edited successfully"}, status=204)
+            
+            else:
+
+                # update likes
+                liker_id = data.get("liker_id")
+                liker = User.objects.get(id=liker_id)
+
+                # if a Like object already exists for this liker/post, update it
+                # if it doesn't exist, create one (defaults to active Like)
+                post_like = Likes.objects.filter(liker=liker, post=post).first()
+
+                if post_like is not None:
+
+                    if post_like.active_bool == True:
+                        post_like.active_bool = False
+                        post_like.save()
+                        return JsonResponse({"message": "Post unliked successfully"}, status=204)
+
+                    else:
+                        post_like.active_bool = True
+                        post_like.save()
+                        return JsonResponse({"message": "Post liked successfully"}, status=204)
+
+                else:
+                    Likes.objects.create(liker=liker, post=post)
+                    return JsonResponse({"message": "Post liked successfully"}, status=204)
+    
+    elif request.method == "GET":
+
+        try:
+            post = Post.objects.get(pk=post_id)
+
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found."}, status=400)
+        except:
+            return JsonResponse({"error": "Error occurred while accessing post."}, status=400)
+
+        finally:
+            postLikes = Likes.objects.filter(post=post).count()
+            return JsonResponse({"post_likes": postLikes}, safe=False, status=200)
 
 
 

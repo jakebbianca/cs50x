@@ -139,19 +139,25 @@ function displayPosts(
 
             }
 
+            // create user-facing content for liking posts
             likeButton.textContent = 'Like this post';
             likeButton.setAttribute('class', 'btn btn-secondary');
-
             let likesCtn = document.createElement('span');
             likesCtn.setAttribute('class', 'likes-ctn')
             likesCtn.append(postLikes, likeButton);
             postContainer.append(likesCtn);
 
+            // on click, update user's like on given post
             likeButton.onclick = () => {
-                //todo
+
+                // run fetch request to make update to likes
+                updateLikes(postID=currentPostID, likerID=userID)
+
+                // get new like count for post and refresh content to match
+                post_likes_check = getPostLikesCount(postID=currentPostID)
+                new_post_likes = post_likes_check.post_likes
+                postLikes.innerHTML = `Liked ${new_post_likes} times`;
             }
-
-
 
         });
 
@@ -269,6 +275,43 @@ async function editPost(postID, newText) {
         body: JSON.stringify({
             content: newText,
         })
+    });
+
+    // if response is not ok, throw error, else, log the result
+    if (!response.ok) {
+        const message = `Error: ${response.status}`;
+        throw new Error(message);
+    } else {
+        const result = await response.json();
+        console.log(result);
+    }
+}
+
+
+async function updateLikes(postID, likerID) {
+
+    const response = await fetch(`post/${postID}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            liker_id: likerID
+        })
+    });
+
+    // if response is not ok, throw error, else, log the result
+    if (!response.ok) {
+        const message = `Error: ${response.status}`;
+        throw new Error(message);
+    } else {
+        const result = await response.json();
+        console.log(result);
+    }
+}
+
+
+async function getPostLikesCount(postID) {
+
+    const response = await fetch(`post/${postID}`, {
+        method: 'GET'
     });
 
     // if response is not ok, throw error, else, log the result
